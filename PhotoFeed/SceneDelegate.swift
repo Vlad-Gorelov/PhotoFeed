@@ -1,10 +1,4 @@
 //
-//  SceneDelegate.swift
-//  PhotoFeed
-//
-//  Created by Владислав Горелов on 01.06.2023.
-//
-
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
