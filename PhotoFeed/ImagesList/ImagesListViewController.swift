@@ -66,7 +66,6 @@ extension ImagesListViewController: UITableViewDelegate {
         let imageWidth = image.size.width
         let scale = imageViewWidth / imageWidth
         let cellHeight = image.size.height * scale + imageInsets.top + imageInsets.bottom
-
         return cellHeight
     }
 }
