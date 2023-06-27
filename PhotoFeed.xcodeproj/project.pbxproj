@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8B3BB9E02A4AD9410024E526 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B3BB9DF2A4AD9410024E526 /* ProfileViewController.swift */; };
 		8B7819012A2916C200B1E301 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7819002A2916C200B1E301 /* AppDelegate.swift */; };
 		8B7819032A2916C200B1E301 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7819022A2916C200B1E301 /* SceneDelegate.swift */; };
 		8B7819052A2916C200B1E301 /* ImagesListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8B7819042A2916C200B1E301 /* ImagesListViewController.swift */; };
@@ -17,6 +18,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		8B3BB9DF2A4AD9410024E526 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		8B7818FD2A2916C200B1E301 /* PhotoFeed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhotoFeed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8B7819002A2916C200B1E301 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8B7819022A2916C200B1E301 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 			isa = PBXGroup;
 			children = (
 				8B7819362A324C7B00B1E301 /* ImagesListCell.swift */,
+				8B3BB9DF2A4AD9410024E526 /* ProfileViewController.swift */,
 				8B7819042A2916C200B1E301 /* ImagesListViewController.swift */,
 			);
 			path = ImagesList;
@@ -151,6 +154,7 @@
 			files = (
 				8B7819052A2916C200B1E301 /* ImagesListViewController.swift in Sources */,
 				8B7819372A324C7B00B1E301 /* ImagesListCell.swift in Sources */,
+				8B3BB9E02A4AD9410024E526 /* ProfileViewController.swift in Sources */,
 				8B7819012A2916C200B1E301 /* AppDelegate.swift in Sources */,
 				8B7819032A2916C200B1E301 /* SceneDelegate.swift in Sources */,
 			);
