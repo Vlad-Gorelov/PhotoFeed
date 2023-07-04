@@ -15,71 +15,10 @@
                     <view key="view" contentMode="scaleToFill" id="CAJ-Q5-XmQ">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="Photo" translatesAutoresizingMaskIntoConstraints="NO" id="SBq-Xx-spa">
-                                <rect key="frame" x="16" y="76" width="70" height="70"/>
-                                <accessibility key="accessibilityConfiguration" identifier="ProfileImage"/>
-                                <userDefinedRuntimeAttributes>
-                                    <userDefinedRuntimeAttribute type="number" keyPath="layout.cornerRadius">
-                                        <integer key="value" value="60"/>
-                                    </userDefinedRuntimeAttribute>
-                                </userDefinedRuntimeAttributes>
-                            </imageView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="afj-eU-3vK">
-                                <rect key="frame" x="354" y="89" width="44" height="44"/>
-                                <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
-                                <state key="normal" image="Exit"/>
-                                <connections>
-                                    <action selector="exitButton:" destination="8EV-MI-DaT" eventType="touchUpInside" id="Q6b-fo-Qmy"/>
-                                </connections>
-                            </button>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Екатерина Новикова" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="A3Y-Pb-5JX" userLabel="nameLabel">
-                                <rect key="frame" x="16" y="154" width="382" height="28"/>
-                                <accessibility key="accessibilityConfiguration" identifier="nameLabel"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="23"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@ekaterina_nov" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pgy-Co-v9W" userLabel="nicknameLabel">
-                                <rect key="frame" x="16" y="190" width="382" height="15.5"/>
-                                <accessibility key="accessibilityConfiguration" identifier="nicknameLabel"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
-                                <color key="textColor" red="0.68235294117647061" green="0.68627450980392157" blue="0.70588235294117641" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="How do you do fellow kids?" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="RMb-xM-CJP" userLabel="textLabel">
-                                <rect key="frame" x="16" y="213.5" width="382" height="16"/>
-                                <accessibility key="accessibilityConfiguration" identifier="textLabel"/>
-                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="13"/>
-                                <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                        </subviews>
                         <viewLayoutGuide key="safeArea" id="6NU-3A-Nxx"/>
                         <color key="backgroundColor" red="0.10196078431372549" green="0.10588235294117647" blue="0.13333333333333333" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                        <constraints>
-                            <constraint firstItem="RMb-xM-CJP" firstAttribute="leading" secondItem="6NU-3A-Nxx" secondAttribute="leading" constant="16" id="7GT-8e-Jcf"/>
-                            <constraint firstItem="6NU-3A-Nxx" firstAttribute="trailing" secondItem="A3Y-Pb-5JX" secondAttribute="trailing" constant="16" id="AKK-nl-gak"/>
-                            <constraint firstItem="A3Y-Pb-5JX" firstAttribute="leading" secondItem="6NU-3A-Nxx" secondAttribute="leading" constant="16" id="CZI-8l-lwd"/>
-                            <constraint firstItem="6NU-3A-Nxx" firstAttribute="trailing" secondItem="pgy-Co-v9W" secondAttribute="trailing" constant="16" id="EXc-MC-hky"/>
-                            <constraint firstItem="SBq-Xx-spa" firstAttribute="leading" secondItem="6NU-3A-Nxx" secondAttribute="leading" constant="16" id="KS6-AT-1vS"/>
-                            <constraint firstItem="A3Y-Pb-5JX" firstAttribute="top" secondItem="SBq-Xx-spa" secondAttribute="bottom" constant="8" id="OsG-hA-6OO"/>
-                            <constraint firstItem="6NU-3A-Nxx" firstAttribute="trailing" secondItem="RMb-xM-CJP" secondAttribute="trailing" constant="16" id="Sks-EY-dC4"/>
-                            <constraint firstItem="pgy-Co-v9W" firstAttribute="leading" secondItem="6NU-3A-Nxx" secondAttribute="leading" constant="16" id="UY6-jh-ZRa"/>
-                            <constraint firstItem="afj-eU-3vK" firstAttribute="top" secondItem="6NU-3A-Nxx" secondAttribute="top" constant="45" id="Znw-Qd-MVa"/>
-                            <constraint firstItem="pgy-Co-v9W" firstAttribute="top" secondItem="A3Y-Pb-5JX" secondAttribute="bottom" constant="8" id="hB1-Dp-Xhx"/>
-                            <constraint firstItem="6NU-3A-Nxx" firstAttribute="trailing" secondItem="afj-eU-3vK" secondAttribute="trailing" constant="16" id="nZi-eN-T16"/>
-                            <constraint firstItem="RMb-xM-CJP" firstAttribute="top" secondItem="pgy-Co-v9W" secondAttribute="bottom" constant="8" id="sb8-gb-a7k"/>
-                            <constraint firstItem="SBq-Xx-spa" firstAttribute="top" secondItem="6NU-3A-Nxx" secondAttribute="top" constant="32" id="tcN-wc-U1c"/>
-                        </constraints>
                     </view>
                     <tabBarItem key="tabBarItem" title="" image="tab_profile_active" id="l1u-nS-4Yz"/>
-                    <connections>
-                        <outlet property="nameLabel" destination="A3Y-Pb-5JX" id="9ME-bc-X2y"/>
-                        <outlet property="nicknameLabel" destination="pgy-Co-v9W" id="9da-QQ-jRK"/>
-                        <outlet property="profileImage" destination="SBq-Xx-spa" id="6qy-kz-H3z"/>
-                        <outlet property="textLabel" destination="RMb-xM-CJP" id="jbT-h5-kU0"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="EPh-iy-l05" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -198,8 +137,10 @@
                                     </imageView>
                                 </subviews>
                                 <constraints>
+                                    <constraint firstItem="On4-5O-9lN" firstAttribute="height" secondItem="nW4-CG-xaI" secondAttribute="height" multiplier="0.462054" id="5Ol-SP-IRy"/>
                                     <constraint firstItem="On4-5O-9lN" firstAttribute="top" secondItem="7c7-o2-mU8" secondAttribute="top" id="Zm8-Nc-o7O"/>
                                     <constraint firstItem="On4-5O-9lN" firstAttribute="trailing" secondItem="7c7-o2-mU8" secondAttribute="trailing" id="iS3-ca-OjM"/>
+                                    <constraint firstItem="On4-5O-9lN" firstAttribute="width" secondItem="nW4-CG-xaI" secondAttribute="width" id="qK9-wj-4rh"/>
                                     <constraint firstItem="On4-5O-9lN" firstAttribute="leading" secondItem="7c7-o2-mU8" secondAttribute="leading" id="sQT-tQ-QGv"/>
                                     <constraint firstAttribute="bottom" secondItem="On4-5O-9lN" secondAttribute="bottom" id="zcy-Ws-mpI"/>
                                 </constraints>
@@ -283,8 +224,6 @@
     <resources>
         <image name="0" width="200" height="132"/>
         <image name="Backward" width="24" height="24"/>
-        <image name="Exit" width="44" height="44"/>
-        <image name="Photo" width="70" height="70"/>
         <image name="Sharing" width="50" height="50"/>
         <image name="like_button_on" width="44" height="44"/>
         <image name="shadowing" width="343" height="30"/>
