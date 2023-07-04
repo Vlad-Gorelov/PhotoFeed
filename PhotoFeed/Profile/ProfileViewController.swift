@@ -3,7 +3,6 @@ import UIKit
 final class ProfileViewController: UIViewController {
 
     private var label: UILabel?
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -55,6 +54,7 @@ final class ProfileViewController: UIViewController {
         self.label = textLabel
 
 //MARK: Logout button
+
         let exitButton = UIButton.systemButton(
             with: UIImage(systemName: "ipad.and.arrow.forward")!,
             target: self,
