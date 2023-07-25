@@ -1,8 +1,6 @@
 import UIKit
 import WebKit
 
-fileprivate let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
-
 protocol WebViewViewControllerDelegate: AnyObject {
     func webViewViewController(_ vc: WebViewViewController, didAuthenticateWithCode code:String)
     func webViewViewControllerDidCancel(_ vc: WebViewViewController)
@@ -58,7 +56,7 @@ final class WebViewViewController: UIViewController {
         updateProgress()
     } else {
         super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
-    }
+        }
     }
 
     private func updateProgress() {

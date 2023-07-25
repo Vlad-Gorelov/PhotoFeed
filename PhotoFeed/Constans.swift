@@ -6,3 +6,5 @@ var redirectURI = "urn:ietf:wg:oauth:2.0:oob"
 let accessScope = "public+read_user+write_likes"
 let DefaultBaseUrl = URL(string: "https://api.unsplash.com")!
 let accessTokenURL = "https://unsplash.com/oauth/token"
+let unsplashAuthorizeURLString = "https://unsplash.com/oauth/authorize"
+
