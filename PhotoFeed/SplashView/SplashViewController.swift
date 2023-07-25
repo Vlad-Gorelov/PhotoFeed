@@ -14,7 +14,7 @@ final class SplashViewController: UIViewController {
             switchToTabBarController()
         } else {
             //show auth Screen
-           performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
+            performSegue(withIdentifier: ShowAuthenticationScreenSegueIdentifier, sender: nil)
         }
     }
 
@@ -66,9 +66,9 @@ extension SplashViewController: AuthViewControllerDelegate {
                 self.oauthToTokenStorage.token = token
                 self.switchToTabBarController()
                 ProgressHUD.dismiss()
-            case .failure:
+            case .failure(let error):
                 ProgressHUD.dismiss()
-            break //заменить на показ алерта
+                print(error)
             }
         }
     }

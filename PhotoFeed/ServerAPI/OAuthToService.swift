@@ -1,46 +1,44 @@
 import Foundation
 
 final class OAuthToService {
+    private let urlSession = URLSession.shared //new
+
+    private var task: URLSessionTask? //new
+    private var lastCode: String? //new
 
     enum NetworkError: Error {
         case httpStatusCode(Int)
         case urlRequestError(Error)
         case urlSessionError(Error)
+        case decodeError(Error) // new
     }
 
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
-        guard var urlComponents = URLComponents(string: accessTokenURL) else {
-            assertionFailure("Failed to make urlComponents from \(accessTokenURL)")
+        assert(Thread.isMainThread)
+        if lastCode == code { return }
+        task?.cancel()
+        lastCode = code
+
+        guard let request = makeRequest(with: code) else {
+            assertionFailure("Failed to make request")
             return
         }
 
-        urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: accessKey),
-            URLQueryItem(name: "client_secret", value: secretKey),
-            URLQueryItem(name: "redirect_uri", value: redirectURI),
-            URLQueryItem(name: "code", value: code),
-            URLQueryItem(name: "grant_type", value: "authorization_code")
-        ]
+        let task = urlSession.dataTask(with: request) { data, response, error in
 
-        guard let url = urlComponents.url else {
-            assertionFailure("Failed to make URL from \(urlComponents)")
-            return
-        }
-
-        var request = URLRequest(url: url)
-        request.httpMethod = "POST"
-
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
             if let error = error {
                 DispatchQueue.main.async {
                     completion(.failure(NetworkError.urlSessionError(error)))
+                    self.lastCode = nil
                 }
                 return
             }
+
             if let response = response as? HTTPURLResponse {
                 if response.statusCode < 200 || response.statusCode >= 300 {
                     DispatchQueue.main.async {
                         completion(.failure(NetworkError.httpStatusCode(response.statusCode)))
+                        self.lastCode = nil
                     }
                     return
                 }
@@ -51,14 +49,43 @@ final class OAuthToService {
                     decoder.keyDecodingStrategy = .convertFromSnakeCase
                     let responseBody = try decoder.decode(OAuthTokenResponseBody.self, from: data)
                     DispatchQueue.main.async {
-                        print(responseBody.accessToken)
                         completion(.success(responseBody.accessToken))
+                        self.task = nil
                     }
                 } catch {
-                    assertionFailure("Decode error - \(error)")
+                    DispatchQueue.main.async {
+                        completion(.failure(NetworkError.decodeError(error)))
+                        self.task = nil
+                    }
                 }
             }
         }
+        self.task = task
         task.resume()
     }
+        private func makeRequest(with code: String) -> URLRequest? {
+            guard var urlComponents = URLComponents(string: accessTokenURL) else {
+                assertionFailure("Failed to make urlComponents from \(accessTokenURL)")
+                return nil
+            }
+
+            urlComponents.queryItems = [
+                URLQueryItem(name: "client_id", value: accessKey),
+                URLQueryItem(name: "client_secret", value: secretKey),
+                URLQueryItem(name: "redirect_uri", value: redirectURI),
+                URLQueryItem(name: "code", value: code),
+                URLQueryItem(name: "grant_type", value: "authorization_code")
+            ]
+
+            guard let url = urlComponents.url else {
+                assertionFailure("Failed to make URL from \(urlComponents)")
+                return nil
+            }
+
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+
+            return request
+        }
+    
 }
