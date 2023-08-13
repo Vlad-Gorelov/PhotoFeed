@@ -1,6 +1,8 @@
 import UIKit
 
 final class ProfileViewController: UIViewController {
+
+    private let profileService = ProfileService.shared
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -52,7 +54,6 @@ final class ProfileViewController: UIViewController {
         super.viewDidLoad()
         
         view.backgroundColor = .ypBlack
-        
         view.addSubview(profileImageView)
         view.addSubview(nameLabel)
         view.addSubview(profileNameLabel)
@@ -60,8 +61,15 @@ final class ProfileViewController: UIViewController {
         view.addSubview(logoutButton)
         
         constraintsSet()
+        updateProfileDetails()
     }
-    
+
+    private func updateProfileDetails() {
+        nameLabel.text = profileService.profile?.name
+        profileNameLabel.text = profileService.profile?.loginName
+        descriptionLabel.text = profileService.profile?.bio 
+    }
+
     private func constraintsSet() {
         NSLayoutConstraint.activate([
             profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),

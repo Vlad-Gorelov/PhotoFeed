@@ -1,4 +1,4 @@
-import Foundation
+import UIKit
 final class OAuthToTokenStorage {
     var token: String? {
         get {

@@ -1,20 +1,32 @@
 import Foundation
 
 final class OAuthToService {
-    private let urlSession = URLSession.shared //new
 
-    private var task: URLSessionTask? //new
-    private var lastCode: String? //new
+    struct OAuthTokenResponseBody: Decodable {
+        let accessToken: String
+        let tokenType: String
+        let scope: String
+        let createdAt: Int
+    }
 
     enum NetworkError: Error {
         case httpStatusCode(Int)
         case urlRequestError(Error)
         case urlSessionError(Error)
-        case decodeError(Error) // new
     }
+
+    enum ParseError: Error {
+        case decodeError(Error)
+    }
+
+    private let urlSession = URLSession.shared
+    private var task: URLSessionTask?
+    private var lastCode: String? 
+
 
     func fetchOAuthToken(code: String, completion: @escaping (Result<String, Error>) -> Void) {
         assert(Thread.isMainThread)
+
         if lastCode == code { return }
         task?.cancel()
         lastCode = code
@@ -43,6 +55,7 @@ final class OAuthToService {
                     return
                 }
             }
+
             if let data = data {
                 do {
                     let decoder = JSONDecoder()
@@ -54,7 +67,7 @@ final class OAuthToService {
                     }
                 } catch {
                     DispatchQueue.main.async {
-                        completion(.failure(NetworkError.decodeError(error)))
+                        completion(.failure(ParseError.decodeError(error)))
                         self.task = nil
                     }
                 }
@@ -63,29 +76,30 @@ final class OAuthToService {
         self.task = task
         task.resume()
     }
-        private func makeRequest(with code: String) -> URLRequest? {
-            guard var urlComponents = URLComponents(string: accessTokenURL) else {
-                assertionFailure("Failed to make urlComponents from \(accessTokenURL)")
-                return nil
-            }
 
-            urlComponents.queryItems = [
-                URLQueryItem(name: "client_id", value: accessKey),
-                URLQueryItem(name: "client_secret", value: secretKey),
-                URLQueryItem(name: "redirect_uri", value: redirectURI),
-                URLQueryItem(name: "code", value: code),
-                URLQueryItem(name: "grant_type", value: "authorization_code")
-            ]
+    private func makeRequest(with code: String) -> URLRequest? {
 
-            guard let url = urlComponents.url else {
-                assertionFailure("Failed to make URL from \(urlComponents)")
-                return nil
-            }
-
-            var request = URLRequest(url: url)
-            request.httpMethod = "POST"
-
-            return request
+        guard var urlComponents = URLComponents(string: accessTokenURL) else {
+            assertionFailure("Failed to make URL Components from \(accessTokenURL)")
+            return nil
         }
-    
+
+        urlComponents.queryItems = [
+            URLQueryItem(name: "client_id", value: accessKey),
+            URLQueryItem(name: "client_secret", value: secretKey),
+            URLQueryItem(name: "redirect_uri", value: redirectURI),
+            URLQueryItem(name: "code", value: code),
+            URLQueryItem(name: "grant_type", value: "authorization_code")
+        ]
+
+        guard let url = urlComponents.url else {
+            assertionFailure("Failed to make URL from \(urlComponents)")
+            return nil
+        }
+
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+
+        return request
+    }
 }
