@@ -5,8 +5,8 @@ final class SplashViewController: UIViewController {
 
     @IBOutlet weak var imageView: UIImageView!
 
-    private let networkService = OAuthToService()
-    private let profileService = ProfileService.shared //new
+    private let networkService = OAuthToService.shared
+    private let profileService = ProfileService.shared 
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
 
 
@@ -34,7 +34,10 @@ final class SplashViewController: UIViewController {
         if let token = oauthToTokenStorage.token {
             fetchProfile(with: token)
         } else {
-            performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
+
+            if !networkService.isLoading {
+                performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
+            }
         }
     }
 
@@ -68,8 +71,8 @@ extension SplashViewController: AuthViewControllerDelegate {
 
         UIBlockingProgressHUD.show()
 
-        dismiss(animated: true) { [weak self] in
-            guard let self = self else { return }
+        networkService.isLoading = true
+        dismiss(animated: true) {
             self.fetchOAuthToken(with: code)
         }
     }

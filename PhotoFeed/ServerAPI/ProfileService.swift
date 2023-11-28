@@ -27,6 +27,7 @@ final class ProfileService {
     }
 
     private var task: URLSessionTask?
+    private var urlSession = URLSession.shared
     private(set) var profile: Profile?
 
     static let shared = ProfileService()
@@ -44,45 +45,24 @@ final class ProfileService {
 
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
-        let task = URLSession.shared.dataTask(with: request) { data, response, error in
+        let task = urlSession.objectTask(for: request) { [weak self] (result: Result<ProfileResult, Error>) in
+            guard let self = self else { return }
 
-            if let error = error {
-                DispatchQueue.main.async {
-                    completion(.failure(NetworkError.urlSessionError(error)))
-                }
-            }
+            switch result {
+            case .success(let profileResult):
+                let profile = Profile(
+                    username: profileResult.username,
+                    name: "\(profileResult.firstName) \(profileResult.lastName)",
+                    loginName: "@\(profileResult.username)",
+                    bio: profileResult.bio
+                    )
+                completion(.success(profile))
+                self.profile = profile
+                self.task = nil
 
-            if let response = response as? HTTPURLResponse {
-                assert(response.statusCode != 401, "Failed with bearer token")
-
-                if response.statusCode != 200 {
-                    DispatchQueue.main.async {
-                        completion(.failure(NetworkError.httpStatusCode(response.statusCode)))
-                    }
-                }
-            }
-
-            if let data = data {
-                do {
-                    let decoder = JSONDecoder()
-                    decoder.keyDecodingStrategy = .convertFromSnakeCase
-                    let profileResult = try decoder.decode(ProfileResult.self, from: data)
-
-                    let profile = Profile(
-                        username: profileResult.username,
-                        name: "\(profileResult.firstName) \(profileResult.lastName)",
-                        loginName: "@\(profileResult.username)",
-                        bio: profileResult.bio
-                        )
-                    DispatchQueue.main.async {
-                        completion(.success(profile))
-                        self.profile = profile
-                    }
-                } catch {
-                    DispatchQueue.main.async {
-                        completion(.failure(ParseError.decodeError(error)))
-                    }
-                }
+            case .failure(let error):
+                self.task = nil
+                completion(.failure(error))
             }
         }
         self.task = task

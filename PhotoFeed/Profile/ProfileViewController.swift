@@ -50,7 +50,6 @@ final class ProfileViewController: UIViewController {
         return button
     }()
 
-    // new -----------------
     override init(nibName: String?, bundle: Bundle?) {
         super.init(nibName: nibName, bundle: bundle)
         addObserver()
@@ -64,7 +63,6 @@ final class ProfileViewController: UIViewController {
     deinit {
         removeObserver()
     }
-    //------------
 
 
     override func viewDidLoad() {
@@ -116,7 +114,6 @@ final class ProfileViewController: UIViewController {
             ])
         }
 
-    // new
         private func addObserver() {
             NotificationCenter.default.addObserver(
                 self,
@@ -142,7 +139,7 @@ final class ProfileViewController: UIViewController {
                 let url = URL(string: profileImageURL)
             else { return }
         }
-    // ---------------------
+    
         @objc private func didTapLogoutButton() {
         }
 }
