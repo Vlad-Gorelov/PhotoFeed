@@ -14,6 +14,8 @@ final class WebViewViewController: UIViewController {
 
     weak var delegate: WebViewViewControllerDelegate?
 
+    private var estimmatedProgressObservation: NSKeyValueObservation? // new api
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -31,6 +33,14 @@ final class WebViewViewController: UIViewController {
 
         webView.load(request)
 
+        estimmatedProgressObservation = webView.observe(\.estimatedProgress) { [weak self] _, _ in
+            guard let self = self else { return }
+            self.updateProgress()
+
+    }
+}
+
+        /*
         updateProgress()
     }
 
@@ -58,6 +68,8 @@ final class WebViewViewController: UIViewController {
         super.observeValue(forKeyPath: keyPath, of: object, change: change, context: context)
         }
     }
+*/
+
 
     private func updateProgress() {
         progressView.progress = Float(webView.estimatedProgress)
