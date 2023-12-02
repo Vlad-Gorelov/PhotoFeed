@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ProfileViewController: UIViewController {
 
@@ -8,7 +9,7 @@ final class ProfileViewController: UIViewController {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Photo")
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = imageView.frame.width / 2
+       // imageView.layer.cornerRadius = imageView.frame.width / 2
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -21,7 +22,7 @@ final class ProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     private let profileNameLabel: UILabel = {
         let label = UILabel()
         label.text = "@___"
@@ -79,15 +80,24 @@ final class ProfileViewController: UIViewController {
         updateProfileDetails()
 
         //Profile image service
-        if let avatarURL = ProfileImageService.shared.avatarURL,
-           let url = URL(string: avatarURL) {
-        }
+  /*  if let avatarURL = ProfileImageService.shared.avatarURL,
+    let url = URL(string: avatarURL) { }
+   */
         // end profile image
     }
         private func updateProfileDetails() {
             nameLabel.text = profileService.profile?.name
             profileNameLabel.text = profileService.profile?.loginName
             descriptionLabel.text = profileService.profile?.bio
+            if let avatarURL = ProfileImageService.shared.avatarURL,
+               let url = URL(string: avatarURL) {
+                let processor = RoundCornerImageProcessor(cornerRadius: 25)
+                profileImageView.kf.setImage(
+                    with: url,
+                    placeholder: UIImage(named: "placeholderAvatar"),
+                    options: [.processor(processor), .transition(.fade(1))]
+                )
+            }
         }
 
         private func constraintsSet() {

@@ -8,6 +8,8 @@ final class ProfileImageService {
 
     private struct ProfileImage: Decodable {
            let small: String
+        let medium: String
+        let large: String
        }
 
     private enum NetworkError: Error {
@@ -44,13 +46,13 @@ final class ProfileImageService {
 
             switch result {
             case .success(let user):
-                completion(.success(user.profileImage.small))
+                completion(.success(user.profileImage.medium))
                 NotificationCenter.default.post(
                     name: ProfileImageService.DidChangeNotification,
                     object: self,
-                    userInfo: ["URL": user.profileImage.small]
+                    userInfo: ["URL": user.profileImage.medium]
                 )
-                self.avatarURL = user.profileImage.small
+                self.avatarURL = user.profileImage.medium
                 self.task = nil
 
             case .failure(let error):
