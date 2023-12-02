@@ -7,9 +7,9 @@ final class ProfileViewController: UIViewController {
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "Photo")
+        //imageView.image = UIImage(named: "Photo")
         imageView.clipsToBounds = true
-       // imageView.layer.cornerRadius = imageView.frame.width / 2
+        imageView.layer.cornerRadius = imageView.frame.width / 2
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -79,11 +79,6 @@ final class ProfileViewController: UIViewController {
         constraintsSet()
         updateProfileDetails()
 
-        //Profile image service
-  /*  if let avatarURL = ProfileImageService.shared.avatarURL,
-    let url = URL(string: avatarURL) { }
-   */
-        // end profile image
     }
         private func updateProfileDetails() {
             nameLabel.text = profileService.profile?.name
