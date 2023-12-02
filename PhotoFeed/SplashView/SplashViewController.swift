@@ -8,8 +8,6 @@ final class SplashViewController: UIViewController {
     private let networkService = OAuthToService.shared
     private let profileService = ProfileService.shared 
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
-
-
     private let oauthToTokenStorage = OAuthToTokenStorage()
 
     override func viewWillAppear(_ animated: Bool) {
@@ -19,6 +17,22 @@ final class SplashViewController: UIViewController {
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
         .lightContent
+    }
+
+    private func showAlert() {
+        let alertController = UIAlertController(
+            title: "Что-то пошло не так :(",
+            message: "Не удаётся войти в систему",
+            preferredStyle: .alert
+            )
+
+        let action = UIAlertAction(title: "Ok", style: .cancel) { [weak self] _ in
+            guard let self = self else { return }
+            self.performSegue(withIdentifier: showAuthenticationScreenSegueIdentifier, sender: nil)
+        }
+
+        alertController.addAction(action)
+        present(alertController, animated: true)
     }
 
     override func viewDidLoad() {
@@ -87,7 +101,9 @@ extension SplashViewController: AuthViewControllerDelegate {
                 UIBlockingProgressHUD.dismiss()
             case.failure(let error):
                 UIBlockingProgressHUD.dismiss()
-                assertionFailure(error.localizedDescription)
+                //assertionFailure(error.localizedDescription)
+                print(error.localizedDescription)
+                showAlert()
             }
         }
     }
@@ -97,9 +113,7 @@ extension SplashViewController: AuthViewControllerDelegate {
             guard let self = self else { return }
             switch result {
             case .success (let profile):
-                // new
                 ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }
-                //
                 UIBlockingProgressHUD.dismiss()
                 self.switchToTabBarController()
             case .failure(let error):
