@@ -82,76 +82,82 @@ final class ProfileViewController: UIViewController {
         updateProfileDetails()
 
     }
-        private func updateProfileDetails() {
-            nameLabel.text = profileService.profile?.name
-            profileNameLabel.text = profileService.profile?.loginName
-            descriptionLabel.text = profileService.profile?.bio
-            if let avatarURL = ProfileImageService.shared.avatarURL,
-               let url = URL(string: avatarURL) {
-                let processor = RoundCornerImageProcessor(cornerRadius: 35, backgroundColor: .clear)
-                profileImageView.kf.setImage(
-                    with: url,
-                    placeholder: UIImage(named: "placeholderAvatar"),
-                    options: [.processor(processor),
-                              .transition(.fade(1)),
-                              .cacheSerializer(FormatIndicatedCacheSerializer.png)]
-                )
-            }
-        }
+    private func updateProfileDetails() {
+        guard let profile = profileService.profile else { return }
 
-        private func constraintsSet() {
-            NSLayoutConstraint.activate([
-                profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
-                profileImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-                profileImageView.heightAnchor.constraint(equalToConstant: 70),
-                profileImageView.widthAnchor.constraint(equalToConstant: 70),
+        profileImageView.contentMode = .scaleAspectFill
+        nameLabel.text = "\(profile.firstName) \(profile.lastName ?? "")"
+        profileNameLabel.text = "@\(profile.username)"
+        descriptionLabel.text = profile.bio
 
-                nameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 8),
-                nameLabel.leadingAnchor.constraint(equalTo: profileImageView.leadingAnchor),
-
-                profileNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
-                profileNameLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
-
-                descriptionLabel.topAnchor.constraint(equalTo: profileNameLabel.bottomAnchor, constant: 8),
-                descriptionLabel.leadingAnchor.constraint(equalTo: profileNameLabel.leadingAnchor),
-
-                logoutButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
-                logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
-                logoutButton.heightAnchor.constraint(equalToConstant: 44),
-                logoutButton.widthAnchor.constraint(equalToConstant: 44)
-
-            ])
-        }
-
-        private func addObserver() {
-            NotificationCenter.default.addObserver(
-                self,
-                selector: #selector(updateAvatar(notification:)),
-                name: ProfileImageService.DidChangeNotification,
-                object: nil
+        if let avatarURL = ProfileImageService.shared.avatarURL,
+           let url = URL(string: avatarURL) {
+            let processor = RoundCornerImageProcessor(cornerRadius: 35, backgroundColor: .clear)
+            profileImageView.kf.setImage(
+                with: url,
+                placeholder: UIImage(named: "placeholderAvatar"),
+                options: [.processor(processor),
+                          .transition(.fade(1)),
+                          .cacheSerializer(FormatIndicatedCacheSerializer.png)]
             )
         }
+    }
 
-        private func removeObserver() {
-            NotificationCenter.default.removeObserver(
-                self,
-                name: ProfileImageService.DidChangeNotification,
-                object: nil
-            )
-        }
+    private func constraintsSet() {
+        NSLayoutConstraint.activate([
+            profileImageView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 32),
+            profileImageView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            profileImageView.heightAnchor.constraint(equalToConstant: 70),
+            profileImageView.widthAnchor.constraint(equalToConstant: 70),
 
-        @objc private func updateAvatar(notification: Notification) {
-            guard
-                isViewLoaded,
-                let userInfo = notification.userInfo,
-                let profileImageURL = userInfo["URL"] as? String,
-                let url = URL(string: profileImageURL)
-            else { return }
-        }
+            nameLabel.topAnchor.constraint(equalTo: profileImageView.bottomAnchor, constant: 8),
+            nameLabel.leadingAnchor.constraint(equalTo: profileImageView.leadingAnchor),
+
+            profileNameLabel.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 8),
+            profileNameLabel.leadingAnchor.constraint(equalTo: nameLabel.leadingAnchor),
+
+            descriptionLabel.topAnchor.constraint(equalTo: profileNameLabel.bottomAnchor, constant: 8),
+            descriptionLabel.leadingAnchor.constraint(equalTo: profileNameLabel.leadingAnchor),
+
+            logoutButton.centerYAnchor.constraint(equalTo: profileImageView.centerYAnchor),
+            logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
+            logoutButton.heightAnchor.constraint(equalToConstant: 44),
+            logoutButton.widthAnchor.constraint(equalToConstant: 44)
+
+        ])
+    }
+
+    private func addObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updateAvatar(notification:)),
+            name: ProfileImageService.DidChangeNotification,
+            object: nil
+        )
+    }
+
+    private func removeObserver() {
+        NotificationCenter.default.removeObserver(
+            self,
+            name: ProfileImageService.DidChangeNotification,
+            object: nil
+        )
+    }
+
+    @objc private func updateAvatar(notification: Notification) {
+        guard
+            isViewLoaded,
+            let userInfo = notification.userInfo,
+            let profileImageURL = userInfo["URL"] as? String,
+            let _ = URL(string: profileImageURL)
+        else { return }
+    }
+
     
-        @objc private func didTapLogoutButton() {
-            print("Exit app")
-        }
+    @objc private func didTapLogoutButton() {
+        print("Exit app")
+
+    }
 }
 
 

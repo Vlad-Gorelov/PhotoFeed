@@ -2,10 +2,10 @@ import UIKit
 
 final class ProfileService {
 
-    private struct ProfileResult: Decodable {
+    struct ProfileResult: Decodable {
         let username: String
         let firstName: String
-        let lastName: String
+        let lastName: String?
         let bio: String?
     }
 
@@ -28,11 +28,11 @@ final class ProfileService {
 
     private var task: URLSessionTask?
     private var urlSession = URLSession.shared
-    private(set) var profile: Profile?
+    var profile: ProfileResult?
 
     static let shared = ProfileService()
 
-    func fetchProfile(_ token: String, completion: @escaping (Result<Profile, Error>) -> Void) {
+    func fetchProfile(_ token: String, completion: @escaping (Result<ProfileResult, Error>) -> Void) {
 
         assert(Thread.isMainThread)
 
@@ -50,7 +50,7 @@ final class ProfileService {
 
             switch result {
             case .success(let profileResult):
-                let profile = Profile(
+            /*    let profile = Profile(
                     username: profileResult.username,
                     name: "\(profileResult.firstName) \(profileResult.lastName)",
                     loginName: "@\(profileResult.username)",
@@ -58,12 +58,15 @@ final class ProfileService {
                     )
                 completion(.success(profile))
                 self.profile = profile
-                self.task = nil
+                self.task = nil */
+                self.profile = profileResult
+                completion(.success(profileResult))
 
             case .failure(let error):
-                self.task = nil
+               // self.task = nil
                 completion(.failure(error))
             }
+            self.task = nil
         }
         self.task = task
         task.resume()
