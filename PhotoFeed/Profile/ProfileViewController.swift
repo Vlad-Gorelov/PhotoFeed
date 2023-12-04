@@ -7,9 +7,9 @@ final class ProfileViewController: UIViewController {
     
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
-        //imageView.image = UIImage(named: "Photo")
+        imageView.image = UIImage(named: "Photo")
         imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = imageView.frame.width / 2
+        imageView.layer.cornerRadius = imageView.frame.size.width / 2
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
@@ -86,11 +86,13 @@ final class ProfileViewController: UIViewController {
             descriptionLabel.text = profileService.profile?.bio
             if let avatarURL = ProfileImageService.shared.avatarURL,
                let url = URL(string: avatarURL) {
-                let processor = RoundCornerImageProcessor(cornerRadius: 25)
+                let processor = RoundCornerImageProcessor(cornerRadius: 35, backgroundColor: .clear)
                 profileImageView.kf.setImage(
                     with: url,
                     placeholder: UIImage(named: "placeholderAvatar"),
-                    options: [.processor(processor), .transition(.fade(1))]
+                    options: [.processor(processor),
+                              .transition(.fade(1)),
+                              .cacheSerializer(FormatIndicatedCacheSerializer.png)]
                 )
             }
         }
