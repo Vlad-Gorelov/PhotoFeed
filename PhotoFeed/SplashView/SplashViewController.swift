@@ -13,10 +13,8 @@ final class SplashViewController: UIViewController {
 
     private let networkService = OAuthToService.shared
     private let oauthToTokenStorage = OAuthToTokenStorage()
-
     private let profileService = ProfileService.shared 
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
-
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)

@@ -43,7 +43,7 @@ final class ProfileViewController: UIViewController {
         return label
     }()
     
-    private let logoutButton: UIButton = {
+    lazy var logoutButton: UIButton = {
         let button = UIButton.systemButton(
             with: UIImage(named: "Exit")!,
             target: self,
@@ -123,7 +123,6 @@ final class ProfileViewController: UIViewController {
             logoutButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             logoutButton.heightAnchor.constraint(equalToConstant: 44),
             logoutButton.widthAnchor.constraint(equalToConstant: 44)
-
         ])
     }
 
@@ -131,7 +130,7 @@ final class ProfileViewController: UIViewController {
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(updateAvatar(notification:)),
-            name: ProfileImageService.DidChangeNotification,
+            name: ProfileImageService.didChangeNotification,
             object: nil
         )
     }
@@ -139,7 +138,7 @@ final class ProfileViewController: UIViewController {
     private func removeObserver() {
         NotificationCenter.default.removeObserver(
             self,
-            name: ProfileImageService.DidChangeNotification,
+            name: ProfileImageService.didChangeNotification,
             object: nil
         )
     }
@@ -152,11 +151,9 @@ final class ProfileViewController: UIViewController {
             let _ = URL(string: profileImageURL)
         else { return }
     }
-
     
     @objc private func didTapLogoutButton() {
         print("Exit app")
-
     }
 }
 

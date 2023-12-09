@@ -7,7 +7,7 @@ final class ProfileImageService {
     }
 
     private struct ProfileImage: Decodable {
-           let small: String
+        let small: String
         let medium: String
         let large: String
        }
@@ -27,7 +27,7 @@ final class ProfileImageService {
 
     private let urlSession = URLSession.shared 
 
-    static let DidChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
+    static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     static let shared = ProfileImageService()
 
 // add fetchImage
@@ -48,7 +48,7 @@ final class ProfileImageService {
             case .success(let user):
                 completion(.success(user.profileImage.medium))
                 NotificationCenter.default.post(
-                    name: ProfileImageService.DidChangeNotification,
+                    name: ProfileImageService.didChangeNotification,
                     object: self,
                     userInfo: ["URL": user.profileImage.medium]
                 )
@@ -58,7 +58,6 @@ final class ProfileImageService {
             case .failure(let error):
                 self.task = nil
                 completion(.failure(error))
-
             }
         }
         self.task = task
