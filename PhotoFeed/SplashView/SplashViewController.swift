@@ -10,10 +10,9 @@ final class SplashViewController: UIViewController {
         return imageView
     }()
 
-
     private let networkService = OAuthToService.shared
     private let oauthToTokenStorage = OAuthToTokenStorage()
-    private let profileService = ProfileService.shared 
+    private let profileService = ProfileService.shared
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
 
     override func viewWillAppear(_ animated: Bool) {
@@ -30,7 +29,7 @@ final class SplashViewController: UIViewController {
             title: "Что-то пошло не так :(",
             message: "Не удаётся войти в систему",
             preferredStyle: .alert
-            )
+        )
 
         let action = UIAlertAction(title: "Ok", style: .cancel) { [weak self] _ in
             guard let self = self else { return }
@@ -83,10 +82,6 @@ final class SplashViewController: UIViewController {
         window.rootViewController = tabBar
     }
 }
-
-
-
-
 
 //MARK: - AuthViewControllerDelegate
 
