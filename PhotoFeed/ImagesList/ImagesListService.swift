@@ -9,6 +9,7 @@ final class ImagesListService {
     private var task: URLSessionTask?
     private let urlSession = URLSession.shared
     private let storageToken = OAuthToTokenStorage()
+    let dateFormater = ISO8601DateFormatter()
 
 
     func fetchPhotosNextPage() {
@@ -22,15 +23,18 @@ final class ImagesListService {
                                         page: String(nextPage),
                                         perPage: perPage
         ) else { return }
-        let task = urlSession.objectTask(for: request) { [weak self] (result: Result<PhotoResult,Error>) in
+        let task = urlSession.objectTask(for: request) { [weak self] (result: Result<[PhotoResult],Error>) in
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 self.task = nil
 
                 switch result {
                 case .success(let photoResult):
-                    let photo = Photo(decoded: photoResult)
-                    self.photos.append(photo)
+                    for photoResult in photoResult {
+                        let photo = Photo(decoded: photoResult)
+                        self.photos.append(photo)
+                    }
+
                     self.lastLoadedPage = nextPage
                     NotificationCenter.default
                         .post(
@@ -47,12 +51,10 @@ final class ImagesListService {
     }
 
     private func imageListRequest(_ token: String, page: String, perPage: String) -> URLRequest? {
-        let url = URL(string: "https://unsplash.com")!
-        let parametres = "/photos?page=\(page)??per_page=\(perPage)"
+        let url = URL(string: "https://api.unsplash.com/photos?page=\(page)??per_page=\(perPage)")!
 
         var request = URLRequest(url: url)
         request.httpMethod = "GET"
-        request.httpBody = parametres.data(using: .utf8)
         request.setValue("Boarer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
