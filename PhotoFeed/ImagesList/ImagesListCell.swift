@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ImagesListCell: UITableViewCell {
     
@@ -8,4 +9,13 @@ final class ImagesListCell: UITableViewCell {
     
     @IBOutlet weak var dateLabel: UILabel!
     
+}
+
+
+extension ImagesListCell {
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        cellImage.kf.cancelDownloadTask()
+    }
 }

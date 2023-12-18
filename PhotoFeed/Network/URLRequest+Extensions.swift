@@ -1,17 +1,31 @@
 import Foundation
 
-extension URLRequest {
-    static func makeHTTPRequest (
+final class URLRequestFactory {
+
+    static let shared = URLRequestFactory()
+
+    private let storage: OAuthToTokenStorage
+
+    init(storage: OAuthToTokenStorage = .shared) {
+        self.storage = storage
+    }
+
+    func makeHTTPRequest(
         path: String,
         httpMethod: String,
-        baseURL: URL? = DefaultBaseUrl
+        baseURLString: String = Constants.defaultBaseUrl
     ) -> URLRequest? {
-        guard let url = URL(string: path, relativeTo: baseURL) else {
-            assertionFailure("Failed to make url")
-            return nil
-        }
-        var request = URLRequest(url: url)
+        guard
+            let url = URL(string: baseURLString),
+            let baseURL = URL(string: path, relativeTo: url)
+        else { return nil }
+
+        var request = URLRequest(url: baseURL)
         request.httpMethod = httpMethod
+
+        if let token = storage.token {
+            request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+        }
         return request
     }
 }

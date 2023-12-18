@@ -2,19 +2,14 @@ import UIKit
 import Kingfisher
 
 final class ImagesListViewController: UIViewController {
-    
-    @IBOutlet private var tableView: UITableView!
-    
+
     private var ShowSingleImageSegueIdentifier = "ShowSingleImage"
-
     private var imageListServiceObserver: NSObjectProtocol?
-
     private var photos: [Photo] = []
-
     private let imagesListService = ImagesListService.shared
 
+    @IBOutlet private var tableView: UITableView!
 
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
@@ -27,13 +22,12 @@ final class ImagesListViewController: UIViewController {
             guard let self = self else { return }
             self.updateTableViewAnimated()
         }
-        imagesListService.fetchPhotosNextPage()
+        imagesListService.fetchPhotoNextPage()
     }
 
     private func updateImage() {
-
     }
-    
+
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == ShowSingleImageSegueIdentifier {
             guard let viewController = segue.destination as? SingleImageViewController,
@@ -74,7 +68,7 @@ final class ImagesListViewController: UIViewController {
             if let date = imagesListService.photos[indexPath.row].createdAt {
                 cell.dateLabel.text = dateFormatter.string(from: date as Date)
             } else {
-                cell.dateLabel.text = ""
+                cell.dateLabel.text = dateFormatter.string(from: Date()).replacingOccurrences(of: "г.", with: "")
             }
             let checkLike = indexPath.row % 2 == 0
             let setLike = checkLike ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
@@ -83,14 +77,13 @@ final class ImagesListViewController: UIViewController {
     }
 }
 
-
 //MARK: - UITableViewDataSource
 
 extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return imagesListService.photos.count
     }
-    
+
     func tableView(
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -114,10 +107,10 @@ extension ImagesListViewController: UITableViewDelegate {
     ) {
         performSegue(withIdentifier: ShowSingleImageSegueIdentifier, sender: indexPath)
     }
-    
+
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let image = imagesListService.photos[indexPath.row]
-        
+
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
         let imageWidth = image.size.width
@@ -128,7 +121,7 @@ extension ImagesListViewController: UITableViewDelegate {
 
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row + 1 == imagesListService.photos.count {
-            imagesListService.fetchPhotosNextPage()
+            imagesListService.fetchPhotoNextPage()
         }
     }
 }

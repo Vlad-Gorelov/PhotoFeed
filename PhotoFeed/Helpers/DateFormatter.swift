@@ -1,11 +1,8 @@
 import Foundation
 
 let dateFormatter: DateFormatter = {
-    lazy var dateFormatter = DateFormatter()
-//    dateFormatter.dateFormat = "yyyy-MM-dd HH:mm"
+    let dateFormatter = DateFormatter()
     dateFormatter.dateStyle = .long
     dateFormatter.timeStyle = .none
     return dateFormatter
 }()
-
-

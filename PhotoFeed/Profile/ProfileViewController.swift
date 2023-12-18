@@ -6,7 +6,7 @@ import WebKit
 final class ProfileViewController: UIViewController {
 
     private let profileService = ProfileService.shared
-    
+
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Photo")
@@ -15,7 +15,7 @@ final class ProfileViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-    
+
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "___ ___"
@@ -33,7 +33,7 @@ final class ProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "___"
@@ -42,7 +42,7 @@ final class ProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     lazy var logoutButton: UIButton = {
         let button = UIButton.systemButton(
             with: UIImage(named: "Exit")!,
@@ -70,14 +70,14 @@ final class ProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         view.backgroundColor = .ypBlack
         view.addSubview(profileImageView)
         view.addSubview(nameLabel)
         view.addSubview(profileNameLabel)
         view.addSubview(descriptionLabel)
         view.addSubview(logoutButton)
-        
+
         constraintsSet()
         updateProfileDetails()
 
@@ -151,7 +151,7 @@ final class ProfileViewController: UIViewController {
             let _ = URL(string: profileImageURL)
         else { return }
     }
-    
+
     @objc private func didTapLogoutButton() {
         print("Exit app")
     }

@@ -59,15 +59,15 @@ final class OAuthToService {
 
     private func makeRequest(with code: String) -> URLRequest? {
 
-        guard var urlComponents = URLComponents(string: accessTokenURL) else {
-            assertionFailure("Failed to make URL Components from \(accessTokenURL)")
+        guard var urlComponents = URLComponents(string: Constants.accessTokenURL) else {
+            assertionFailure("Failed to make URL Components from \(Constants.accessTokenURL)")
             return nil
         }
 
         urlComponents.queryItems = [
-            URLQueryItem(name: "client_id", value: accessKey),
-            URLQueryItem(name: "client_secret", value: secretKey),
-            URLQueryItem(name: "redirect_uri", value: redirectURI),
+            URLQueryItem(name: "client_id", value: Constants.accessKey),
+            URLQueryItem(name: "client_secret", value: Constants.secretKey),
+            URLQueryItem(name: "redirect_uri", value: Constants.redirectURI),
             URLQueryItem(name: "code", value: code),
             URLQueryItem(name: "grant_type", value: "authorization_code")
         ]

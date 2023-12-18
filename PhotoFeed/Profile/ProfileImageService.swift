@@ -2,38 +2,21 @@ import UIKit
 
 final class ProfileImageService {
 
-    private struct UserResult: Decodable {
-       let profileImage: ProfileImage
-    }
-
-    private struct ProfileImage: Decodable {
-        let small: String
-        let medium: String
-        let large: String
-       }
-
-    private enum NetworkError: Error {
-            case httpStatusCode(Int)
-            case urlRequestError(Error)
-            case urlSessionError(Error)
-        }
-
-    private enum ParseError: Error {
-           case decodeError(Error)
-       }
-
     private var task: URLSessionTask?
     private(set) var avatarURL: String?
-
-    private let urlSession = URLSession.shared 
-
+    private let urlSession = URLSession.shared
     static let didChangeNotification = Notification.Name(rawValue: "ProfileImageProviderDidChange")
     static let shared = ProfileImageService()
+    private let urlRequestFactory: URLRequestFactory
+
+    init(urlRequestFactory: URLRequestFactory = .shared) {
+        self.urlRequestFactory = urlRequestFactory
+    }
 
 // add fetchImage
     func fetchProfileImageURL(username: String, completion: @escaping (Result<String, Error>) -> Void) {
 
-        guard var request = URLRequest.makeHTTPRequest(path: "/users/\(username)", httpMethod: "GET"),
+        guard var request = urlRequestFactory.makeHTTPRequest(path: "/users/\(username)", httpMethod: "GET"),
               let token = OAuthToTokenStorage.shared.token else {
             assertionFailure("Failed to make HTTP request")
             return
