@@ -56,7 +56,7 @@ final class ImagesListViewController: UIViewController {
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         if let url = imagesListService.photos[indexPath.row].thumbImageURL,
            let imageURL = URL(string: url) {
-         //   cell.applyGradient()
+        
             cell.cellImage.kf.indicatorType = .activity
             cell.cellImage.kf.setImage(
                 with: imageURL,

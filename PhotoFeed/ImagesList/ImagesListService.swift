@@ -20,7 +20,7 @@ final class ImagesListService {
         task?.cancel()
         let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage! + 1
         guard let request = photosRequest(page: nextPage, perPage: 10) else {
-            assertionFailure("\(NetworkError.invalidRequest)")
+            assertionFailure("\(String(describing: NetworkError.invalidRequest))")
             return
         }
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<[PhotoResult], Error>) in
