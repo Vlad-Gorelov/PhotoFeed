@@ -32,7 +32,7 @@ final class ImagesListViewController: UIViewController {
         if segue.identifier == ShowSingleImageSegueIdentifier {
             guard let viewController = segue.destination as? SingleImageViewController,
             let indexPath = sender as? IndexPath else { return }
-            if let url = imagesListService.photos[indexPath.row].largeImageURL,
+            if let url = imagesListService.photos[indexPath.row].fullImageURL,
                let imageURL = URL(string: url) {
                 viewController.imageURL = imageURL
             }
@@ -70,9 +70,9 @@ final class ImagesListViewController: UIViewController {
             } else {
                 cell.dateLabel.text = dateFormatter.string(from: Date()).replacingOccurrences(of: "г.", with: "")
             }
-            let checkLike = indexPath.row % 2 == 0
-            let setLike = checkLike ? UIImage(named: "like_button_on") : UIImage(named: "like_button_off")
-            cell.likeButton.setImage(setLike, for: .normal)
+
+            let like = imagesListService.photos[indexPath.row].isLiked
+            cell.setIsLiked(entryValue: like)
         }
     }
 }
@@ -92,6 +92,8 @@ extension ImagesListViewController: UITableViewDataSource {
         guard let imageListCell = cell as? ImagesListCell else {
             return UITableViewCell()
         }
+
+            imageListCell.delegate = self
 
         configCell(for: imageListCell, with: indexPath)
         return imageListCell
@@ -123,5 +125,33 @@ extension ImagesListViewController: UITableViewDelegate {
         if indexPath.row + 1 == imagesListService.photos.count {
             imagesListService.fetchPhotoNextPage()
         }
+    }
+}
+
+extension ImagesListViewController: ImagesListCellDelegate {
+    func imagesListCellDidTapLike(_ cell: ImagesListCell) {
+
+        guard let indexPath = tableView.indexPath(for: cell) else { return }
+        let photo = photos[indexPath.row]
+        //Показываем лоадер
+        UIBlockingProgressHUD.show()
+        imagesListService.changeLike(
+            photoId: photo.id,
+            isLike: !photo.isLiked) { result in
+                switch result {
+                case .success:
+                    //Синхронизируем массив картинок с сервисом
+                    self.photos = self.imagesListService.photos
+                    //Изменим индикацию лайка картинки
+                    cell.setIsLiked(entryValue: self.photos[indexPath.row].isLiked)
+                    //Уберём лоадер
+                    UIBlockingProgressHUD.dismiss()
+                case .failure:
+                    //Уберём лоадер
+                    UIBlockingProgressHUD.dismiss()
+                    //Покажем, что что-то пошло не так
+                    //TODO: Показать ошибку с использованием UIAlertController
+                }
+            }
     }
 }
