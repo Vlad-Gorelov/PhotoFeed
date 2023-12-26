@@ -40,6 +40,7 @@ struct Photo {
     let thumbImageURL: String?
     let fullImageURL: String?
     let isLiked: Bool
+    
 }
 
 struct LikeResult: Decodable {

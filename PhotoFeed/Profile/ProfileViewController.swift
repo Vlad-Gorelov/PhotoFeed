@@ -83,7 +83,6 @@ final class ProfileViewController: UIViewController {
 
         constraintsSet()
         updateProfileDetails()
-
     }
 
     private func updateProfileDetails() {

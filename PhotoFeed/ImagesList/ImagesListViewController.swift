@@ -145,6 +145,7 @@ extension ImagesListViewController: ImagesListCellDelegate {
                     //Изменим индикацию лайка картинки
                     cell.setIsLiked(entryValue: self.photos[indexPath.row].isLiked)
                     //Уберём лоадер
+                    print("Значение лайка поменялось")
                     UIBlockingProgressHUD.dismiss()
                 case .failure(let error):
                     //Уберём лоадер
@@ -152,6 +153,7 @@ extension ImagesListViewController: ImagesListCellDelegate {
                     //Покажем, что что-то пошло не так
                     //TODO: Показать ошибку с использованием UIAlertController
                     print("\(error)")
+                    print("Ошибка")
                     self.showAlertLikes()
                 }
             }

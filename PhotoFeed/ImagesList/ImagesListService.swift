@@ -55,8 +55,13 @@ final class ImagesListService {
         guard let request = likeRequest(token,
                                         photoId: photoId,
                                         httpMethod: isLike ? "DELETE" : "POST"
-        ) else { return }
+        ) else {
+            print("Запрос не удался")
+            return
+        }
+        
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<LikeResult, Error>) in
+            
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 self.task = nil
@@ -87,7 +92,7 @@ final class ImagesListService {
     private func likeRequest(_ token: String,
                              photoId: String,
                              httpMethod: String) -> URLRequest? {
-        let url = URL(string: "https://api.unsplash.com/photos\(photoId)/like")!
+        let url = URL(string: "https://api.unsplash.com/photos/\(photoId)/like")!
         var request = URLRequest(url: url)
         request.httpMethod = httpMethod
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
