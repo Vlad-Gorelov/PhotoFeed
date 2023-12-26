@@ -6,6 +6,9 @@ import WebKit
 final class ProfileViewController: UIViewController {
 
     private let profileService = ProfileService.shared
+    private let profileImageService = ProfileImageService.shared
+    private let imagesListService = ImagesListService.shared
+    private let token = OAuthToTokenStorage()
 
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
@@ -82,6 +85,7 @@ final class ProfileViewController: UIViewController {
         updateProfileDetails()
 
     }
+
     private func updateProfileDetails() {
         guard let profile = profileService.profile else { return }
 
@@ -100,6 +104,9 @@ final class ProfileViewController: UIViewController {
                           .transition(.fade(1)),
                           .cacheSerializer(FormatIndicatedCacheSerializer.png)]
             )
+            let cache = ImageCache.default
+            cache.clearMemoryCache()
+            cache.clearDiskCache()
         }
     }
 
@@ -153,8 +160,35 @@ final class ProfileViewController: UIViewController {
     }
 
     @objc private func didTapLogoutButton() {
-        print("Exit app")
+        showAlert()
     }
 }
 
+extension ProfileViewController {
 
+    private func showAlert() {
+        let alert = UIAlertController(
+            title: "Выход из аккаунта",
+            message: "Вы точно хотите выйти из аккаунта Unsplash?",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Да", style: .default) { [weak self] alertAction in
+            guard let self = self else { return }
+            self.cleanAndGoToMainScreen()
+        })
+        alert.addAction(UIAlertAction(title: "Нет", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+
+    private func cleanAndGoToMainScreen() {
+        WebViewViewController.clean()
+        profileImageService.clean()
+        profileService.clean()
+        imagesListService.clean()
+        token.clean()
+
+        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+        window.rootViewController = SplashViewController()
+    }
+
+}

@@ -1,4 +1,5 @@
 import UIKit
+import Kingfisher
 
 final class ProfileService {
 
@@ -39,4 +40,13 @@ final class ProfileService {
         self.task = task
         task.resume()
     }
+}
+
+extension ProfileService {
+
+    func clean() {
+        profile = nil
+        task = nil
+    }
+
 }

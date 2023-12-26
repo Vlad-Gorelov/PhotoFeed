@@ -146,12 +146,26 @@ extension ImagesListViewController: ImagesListCellDelegate {
                     cell.setIsLiked(entryValue: self.photos[indexPath.row].isLiked)
                     //Уберём лоадер
                     UIBlockingProgressHUD.dismiss()
-                case .failure:
+                case .failure(let error):
                     //Уберём лоадер
                     UIBlockingProgressHUD.dismiss()
                     //Покажем, что что-то пошло не так
                     //TODO: Показать ошибку с использованием UIAlertController
+                    print("\(error)")
+                    self.showAlertLikes()
                 }
             }
     }
+
+    private func showAlertLikes() {
+        let alert = UIAlertController(
+            title: "Ошибка",
+            message: "Что-то пошло не так :(",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Понятно", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+
 }
+

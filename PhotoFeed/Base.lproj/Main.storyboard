@@ -148,6 +148,9 @@
                                                     </constraints>
                                                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                     <state key="normal" title=" " image="like_button_on"/>
+                                                    <connections>
+                                                        <action selector="likeButtonClicked:" destination="jEp-Cf-eXW" eventType="touchUpInside" id="19p-vy-y6W"/>
+                                                    </connections>
                                                 </button>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="8 июня 2023" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="AFB-JZ-EDP">
                                                     <rect key="frame" x="24" y="192" width="80" height="16"/>
@@ -225,10 +228,8 @@
                                     </imageView>
                                 </subviews>
                                 <constraints>
-                                    <constraint firstItem="On4-5O-9lN" firstAttribute="height" secondItem="nW4-CG-xaI" secondAttribute="height" multiplier="0.462054" id="5Ol-SP-IRy"/>
                                     <constraint firstItem="On4-5O-9lN" firstAttribute="top" secondItem="7c7-o2-mU8" secondAttribute="top" id="Zm8-Nc-o7O"/>
                                     <constraint firstItem="On4-5O-9lN" firstAttribute="trailing" secondItem="7c7-o2-mU8" secondAttribute="trailing" id="iS3-ca-OjM"/>
-                                    <constraint firstItem="On4-5O-9lN" firstAttribute="width" secondItem="nW4-CG-xaI" secondAttribute="width" id="qK9-wj-4rh"/>
                                     <constraint firstItem="On4-5O-9lN" firstAttribute="leading" secondItem="7c7-o2-mU8" secondAttribute="leading" id="sQT-tQ-QGv"/>
                                     <constraint firstAttribute="bottom" secondItem="On4-5O-9lN" secondAttribute="bottom" id="zcy-Ws-mpI"/>
                                 </constraints>

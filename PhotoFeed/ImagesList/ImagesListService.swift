@@ -87,7 +87,7 @@ final class ImagesListService {
     private func likeRequest(_ token: String,
                              photoId: String,
                              httpMethod: String) -> URLRequest? {
-        let url = URL(string: "http://api.unsplash.com/photos\(photoId)/like")!
+        let url = URL(string: "https://api.unsplash.com/photos\(photoId)/like")!
         var request = URLRequest(url: url)
         request.httpMethod = httpMethod
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
@@ -115,5 +115,14 @@ extension ImagesListService {
                                           httpMethod: "GET"
         )
     }
+
+    func clean() {
+        task = nil
+        photos = []
+        lastLoadedPage = nil
+    }
+    
 }
+
+
 

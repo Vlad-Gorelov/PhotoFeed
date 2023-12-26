@@ -13,7 +13,7 @@ final class ProfileImageService {
         self.urlRequestFactory = urlRequestFactory
     }
 
-// add fetchImage
+    // add fetchImage
     func fetchProfileImageURL(username: String, completion: @escaping (Result<String, Error>) -> Void) {
 
         guard var request = urlRequestFactory.makeHTTPRequest(path: "/users/\(username)", httpMethod: "GET"),
@@ -46,6 +46,13 @@ final class ProfileImageService {
         self.task = task
         task.resume()
     }
-// end fetchImage
+    // end fetchImage
+}
+
+extension ProfileImageService {
+    func clean() {
+        avatarURL = nil
+        task = nil
+    }
 }
 
