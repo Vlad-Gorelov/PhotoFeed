@@ -105,6 +105,7 @@ extension SplashViewController: AuthViewControllerDelegate {
                 oauthToTokenStorage.token = token
                 fetchProfile()
                 UIBlockingProgressHUD.dismiss()
+                
             case.failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 print(error.localizedDescription)
@@ -122,6 +123,7 @@ extension SplashViewController: AuthViewControllerDelegate {
                 guard let username = self.profileServiсe.profile?.username else { return }
                 self.profileImageService.fetchProfileImageURL(username: username) { _ in }
                 self.switchToTabBarController()
+
             case .failure:
                 UIBlockingProgressHUD.dismiss()
                 self.showAlert()

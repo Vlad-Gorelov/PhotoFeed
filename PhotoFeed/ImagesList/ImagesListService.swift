@@ -110,8 +110,6 @@ final class ImagesListService {
     }
 }
 
-
-
 extension ImagesListService {
     private func photosRequest(page: Int, perPage: Int) -> URLRequest? {
         urlRequestFactory.makeHTTPRequest(path: ("/photos?"
@@ -128,6 +126,3 @@ extension ImagesListService {
     }
     
 }
-
-
-

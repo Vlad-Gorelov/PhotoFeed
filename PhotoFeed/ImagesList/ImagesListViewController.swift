@@ -2,18 +2,18 @@ import UIKit
 import Kingfisher
 
 final class ImagesListViewController: UIViewController {
-
+    
     private var ShowSingleImageSegueIdentifier = "ShowSingleImage"
     private var imageListServiceObserver: NSObjectProtocol?
     private var photos: [Photo] = []
     private let imagesListService = ImagesListService.shared
-
+    
     @IBOutlet private var tableView: UITableView!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-
+        
         imageListServiceObserver = NotificationCenter.default.addObserver(
             forName: ImagesListService.didChangeNotification,
             object: nil,
@@ -24,14 +24,11 @@ final class ImagesListViewController: UIViewController {
         }
         imagesListService.fetchPhotoNextPage()
     }
-
-    private func updateImage() {
-    }
-
+    
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == ShowSingleImageSegueIdentifier {
             guard let viewController = segue.destination as? SingleImageViewController,
-            let indexPath = sender as? IndexPath else { return }
+                  let indexPath = sender as? IndexPath else { return }
             if let url = imagesListService.photos[indexPath.row].fullImageURL,
                let imageURL = URL(string: url) {
                 viewController.imageURL = imageURL
@@ -40,7 +37,7 @@ final class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
-
+    
     private func updateTableViewAnimated() {
         let oldCount = photos.count
         let newCount = imagesListService.photos.count
@@ -52,17 +49,17 @@ final class ImagesListViewController: UIViewController {
             } completion: { _ in }
         }
     }
-
+    
     private func configCell(for cell: ImagesListCell, with indexPath: IndexPath) {
         if let url = imagesListService.photos[indexPath.row].thumbImageURL,
            let imageURL = URL(string: url) {
-        
+            
             cell.cellImage.kf.indicatorType = .activity
             cell.cellImage.kf.setImage(
                 with: imageURL,
                 placeholder: UIImage(named: "Stub")) { [weak self] _ in
                     guard let self = self else { return }
-
+                    
                     self.tableView.reloadRows(at: [indexPath], with: .automatic)
                 }
             if let date = imagesListService.photos[indexPath.row].createdAt {
@@ -70,7 +67,7 @@ final class ImagesListViewController: UIViewController {
             } else {
                 cell.dateLabel.text = dateFormatter.string(from: Date()).replacingOccurrences(of: "г.", with: "")
             }
-
+            
             let like = imagesListService.photos[indexPath.row].isLiked
             cell.setIsLiked(entryValue: like)
         }
@@ -83,21 +80,20 @@ extension ImagesListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return imagesListService.photos.count
     }
-
+    
     func tableView(
         _ tableView: UITableView,
         cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
-
-        guard let imageListCell = cell as? ImagesListCell else {
-            return UITableViewCell()
-        }
-
+            let cell = tableView.dequeueReusableCell(withIdentifier: ImagesListCell.reuseIdentifier, for: indexPath)
+            
+            guard let imageListCell = cell as? ImagesListCell else {
+                return UITableViewCell()
+            }
+            
             imageListCell.delegate = self
-
-        configCell(for: imageListCell, with: indexPath)
-        return imageListCell
-    }
+            configCell(for: imageListCell, with: indexPath)
+            return imageListCell
+        }
 }
 
 //MARK: - UITableViewDelegate
@@ -109,10 +105,9 @@ extension ImagesListViewController: UITableViewDelegate {
     ) {
         performSegue(withIdentifier: ShowSingleImageSegueIdentifier, sender: indexPath)
     }
-
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         let image = imagesListService.photos[indexPath.row]
-
         let imageInsets = UIEdgeInsets(top: 4, left: 16, bottom: 4, right: 16)
         let imageViewWidth = tableView.bounds.width - imageInsets.left - imageInsets.right
         let imageWidth = image.size.width
@@ -120,7 +115,7 @@ extension ImagesListViewController: UITableViewDelegate {
         let cellHeight = image.size.height * scale + imageInsets.top + imageInsets.bottom
         return cellHeight
     }
-
+    
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         if indexPath.row + 1 == imagesListService.photos.count {
             imagesListService.fetchPhotoNextPage()
@@ -129,36 +124,26 @@ extension ImagesListViewController: UITableViewDelegate {
 }
 
 extension ImagesListViewController: ImagesListCellDelegate {
-    func imagesListCellDidTapLike(_ cell: ImagesListCell) {
 
+    func imagesListCellDidTapLike(_ cell: ImagesListCell) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
         let photo = photos[indexPath.row]
-        //Показываем лоадер
         UIBlockingProgressHUD.show()
         imagesListService.changeLike(
             photoId: photo.id,
             isLike: !photo.isLiked) { result in
                 switch result {
                 case .success:
-                    //Синхронизируем массив картинок с сервисом
                     self.photos = self.imagesListService.photos
-                    //Изменим индикацию лайка картинки
                     cell.setIsLiked(entryValue: self.photos[indexPath.row].isLiked)
-                    //Уберём лоадер
-                    print("Значение лайка поменялось")
                     UIBlockingProgressHUD.dismiss()
-                case .failure(let error):
-                    //Уберём лоадер
+                case .failure:
                     UIBlockingProgressHUD.dismiss()
-                    //Покажем, что что-то пошло не так
-                    //TODO: Показать ошибку с использованием UIAlertController
-                    print("\(error)")
-                    print("Ошибка")
                     self.showAlertLikes()
                 }
             }
     }
-
+    
     private func showAlertLikes() {
         let alert = UIAlertController(
             title: "Ошибка",
@@ -168,6 +153,5 @@ extension ImagesListViewController: ImagesListCellDelegate {
         alert.addAction(UIAlertAction(title: "Понятно", style: .default, handler: nil))
         present(alert, animated: true, completion: nil)
     }
-
 }
 

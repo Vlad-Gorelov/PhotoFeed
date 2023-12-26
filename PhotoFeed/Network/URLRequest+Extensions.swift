@@ -3,7 +3,6 @@ import Foundation
 final class URLRequestFactory {
 
     static let shared = URLRequestFactory()
-
     private let storage: OAuthToTokenStorage
 
     init(storage: OAuthToTokenStorage = .shared) {
@@ -57,7 +56,6 @@ extension URLSession {
                     let decoder = JSONDecoder()
                     decoder.keyDecodingStrategy = .convertFromSnakeCase
                     let result = try decoder.decode(DecodingType.self, from: data)
-
                     DispatchQueue.main.async {
                         completion(.success(result))
                     }

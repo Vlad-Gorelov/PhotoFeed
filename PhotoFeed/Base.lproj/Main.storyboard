@@ -229,9 +229,7 @@
                                 </subviews>
                                 <constraints>
                                     <constraint firstItem="On4-5O-9lN" firstAttribute="top" secondItem="7c7-o2-mU8" secondAttribute="top" id="Zm8-Nc-o7O"/>
-                                    <constraint firstItem="On4-5O-9lN" firstAttribute="centerX" secondItem="7c7-o2-mU8" secondAttribute="centerX" id="hgK-cV-Dyj"/>
                                     <constraint firstItem="On4-5O-9lN" firstAttribute="trailing" secondItem="7c7-o2-mU8" secondAttribute="trailing" id="iS3-ca-OjM"/>
-                                    <constraint firstItem="On4-5O-9lN" firstAttribute="centerY" secondItem="7c7-o2-mU8" secondAttribute="centerY" id="lbt-wi-K1a"/>
                                     <constraint firstItem="On4-5O-9lN" firstAttribute="leading" secondItem="7c7-o2-mU8" secondAttribute="leading" id="sQT-tQ-QGv"/>
                                     <constraint firstAttribute="bottom" secondItem="On4-5O-9lN" secondAttribute="bottom" id="zcy-Ws-mpI"/>
                                 </constraints>
