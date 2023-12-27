@@ -31,7 +31,7 @@ final class OAuthToService {
         assert(Thread.isMainThread)
 
         if lastCode == code { return }
-        task?.cancel()
+        task?.cancel() 
         lastCode = code
 
         guard let request = makeRequest(with: code) else {

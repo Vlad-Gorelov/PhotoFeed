@@ -131,7 +131,7 @@ extension ImagesListViewController: ImagesListCellDelegate {
         UIBlockingProgressHUD.show()
         imagesListService.changeLike(
             photoId: photo.id,
-            isLike: !photo.isLiked) { result in
+            isLike: photo.isLiked) { result in
                 switch result {
                 case .success:
                     self.photos = self.imagesListService.photos

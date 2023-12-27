@@ -49,9 +49,9 @@ final class ImagesListService {
         task.resume()
     }
 
-    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) {
+    func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) { //
         assert(Thread.isMainThread)
-        task?.cancel()
+        guard task == nil else { return }
         guard let token = storageToken.token else { return }
         guard let request = likeRequest(token,
                                         photoId: photoId,
@@ -104,9 +104,9 @@ final class ImagesListService {
                           size: CGSize(width: photoResult.width ?? 0, height: photoResult.height ?? 0),
                           createdAt: dateFormater.date(from: photoResult.createdAt ?? ""),
                           description: photoResult.description,
-                          thumbImageURL: photoResult.urls?.thumbImageURL,
-                          fullImageURL: photoResult.urls?.fullImageURL,
-                          isLiked: photoResult.isLiked ?? false)
+                          thumbImageURL: photoResult.urls?.thumb,
+                          fullImageURL: photoResult.urls?.full,
+                          isLiked: photoResult.likedByUser ?? false)
     }
 }
 
