@@ -18,7 +18,8 @@ final class ImagesListService {
     }
 
     func fetchPhotoNextPage() {
-        task?.cancel()
+        guard task == nil else { return }
+
         let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage! + 1
         guard let request = photosRequest(page: nextPage, perPage: 10) else {
             assertionFailure("\(String(describing: NetworkError.invalidRequest))")
@@ -56,7 +57,6 @@ final class ImagesListService {
                                         photoId: photoId,
                                         httpMethod: isLike ? "DELETE" : "POST"
         ) else {
-            print("Запрос не удался")
             return
         }
         
