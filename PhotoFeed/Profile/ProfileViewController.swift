@@ -168,7 +168,7 @@ extension ProfileViewController {
     private func showAlert() {
         let alert = UIAlertController(
             title: "Пока, пока!",
-            message: "Уверены что хотите выйти?",
+            message: "Уверены, что хотите выйти?",
             preferredStyle: .alert
         )
         alert.addAction(UIAlertAction(title: "Да", style: .default) { [weak self] alertAction in

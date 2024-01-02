@@ -6,20 +6,28 @@ protocol WebViewViewControllerDelegate: AnyObject {
     func webViewViewControllerDidCancel(_ vc: WebViewViewController)
 }
 
-final class WebViewViewController: UIViewController {
+protocol WebViewViewControllerProtocol: AnyObject {
+    var presenter: WebViewPresenterProtocol? { get set }
+    func load(request: URLRequest)
+    func setProgressValue(_ newValue: Float)
+    func setProgressHidden(_ isHidden: Bool)
+}
+
+final class WebViewViewController: UIViewController & WebViewViewControllerProtocol {
+
+    private var estimatedProgressObservation: NSKeyValueObservation?
+    weak var delegate: WebViewViewControllerDelegate?
+    var presenter: WebViewPresenterProtocol?
 
     @IBOutlet private var webView: WKWebView!
 
     @IBOutlet private var progressView: UIProgressView!
 
-    weak var delegate: WebViewViewControllerDelegate?
-
-    private var estimmatedProgressObservation: NSKeyValueObservation?
-
     override func viewDidLoad() {
         super.viewDidLoad()
 
         webView.navigationDelegate = self
+        presenter?.viewDidLoad()
 
         var urlComponents = URLComponents(string: Constants.unsplashAuthorizeURLString)!
         urlComponents.queryItems = [
@@ -33,11 +41,14 @@ final class WebViewViewController: UIViewController {
 
         webView.load(request)
 
-        estimmatedProgressObservation = webView.observe(\.estimatedProgress) { [weak self] _, _ in
-            guard let self = self else { return }
-            self.updateProgress()
-
-        }
+        estimatedProgressObservation = webView.observe(
+            \.estimatedProgress,
+             options:[],
+             changeHandler: { [weak self] _, _ in
+                 guard let self = self else { return }
+                 self.presenter?.didUpdateProgressValue(webView.estimatedProgress)
+             }
+        )
     }
 
     private func updateProgress() {
