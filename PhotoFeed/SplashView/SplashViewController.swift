@@ -10,11 +10,12 @@ final class SplashViewController: UIViewController {
         return imageView
     }()
 
-    private let networkService = OAuthToService.shared
-    private let oauthToTokenStorage = OAuthToTokenStorage()
+    private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
+    private let oauthToTokenStorage = OAuthToTokenStorage.shared
+    private let oauthToService = OAuthToService.shared
     private let profileServiсe = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
-    private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
+
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -54,15 +55,8 @@ final class SplashViewController: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
-        if oauthToTokenStorage.token != nil {
-            fetchProfile()
-        } else {
-
-            if !networkService.isLoading {
-                switchToAuthViewController()
-            }
-        }
+        guard UIBlockingProgressHUD.isShowing == false else { return }
+        checkAuthTokenAndFetchProfile()
     }
 
     private func switchToAuthViewController() {
@@ -89,27 +83,32 @@ final class SplashViewController: UIViewController {
 extension SplashViewController: AuthViewControllerDelegate {
     func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
 
-        UIBlockingProgressHUD.show()
-
-        networkService.isLoading = true
-        dismiss(animated: true) {
+        dismiss(animated: true) { [weak self] in
+            guard let self = self else { return }
+            UIBlockingProgressHUD.show()
             self.fetchOAuthToken(with: code)
+            self.checkAuthTokenAndFetchProfile()
+        }
+    }
+
+    func checkAuthTokenAndFetchProfile() {
+        if oauthToService.isAuthenticated {
+            fetchProfile()
+        } else {
+            presentAuthViewController()
         }
     }
 
     private func fetchOAuthToken(with code: String) {
-        networkService.fetchOAuthToken(code: code) { [weak self] result in
+        oauthToService.fetchAuthToken(code) { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .success(let token):
-                oauthToTokenStorage.token = token
+            case .success:
                 fetchProfile()
-                UIBlockingProgressHUD.dismiss()
-                
             case.failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 print(error.localizedDescription)
-                showAlert()
+                break
             }
         }
     }
@@ -130,6 +129,18 @@ extension SplashViewController: AuthViewControllerDelegate {
                 break
             }
         }
+    }
+
+    // Alert
+    func presentAuthViewController() {
+        guard let authViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
+        else {
+            assertionFailure("Failed to show Authentication Screen")
+            return
+        }
+        authViewController.delegate = self
+        authViewController.modalPresentationStyle = .fullScreen
+        self.present(authViewController, animated: true, completion: nil)
     }
 }
 

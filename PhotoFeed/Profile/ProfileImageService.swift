@@ -13,43 +13,51 @@ final class ProfileImageService {
         self.urlRequestFactory = urlRequestFactory
     }
 
-    // add fetchImage
-    func fetchProfileImageURL(username: String, completion: @escaping (Result<String, Error>) -> Void) {
-
-        guard var request = urlRequestFactory.makeHTTPRequest(path: "/users/\(username)", httpMethod: "GET"),
-              let token = OAuthToTokenStorage.shared.token else {
-            assertionFailure("Failed to make HTTP request")
+    func fetchProfileImageURL(
+        username: String,
+        completion: @escaping (Result<String, Error>) -> Void
+    ) {
+        assert(Thread.isMainThread)
+        task?.cancel()
+        guard var request = profileImageRequest(username: username) else {
+            assertionFailure("Invalid request")
+            completion(.failure(NetworkError.invalidRequest))
             return
         }
-        request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
 
         let task = urlSession.objectTask(for: request) { [weak self] (result: Result<UserResult, Error>) in
-
             guard let self = self else { return }
-
             switch result {
-            case .success(let user):
-                completion(.success(user.profileImage.medium))
+            case .success(let userPhoto):
+                guard let profileImageURL = userPhoto.profileImage?.large else { return }
+                self.avatarURL = profileImageURL
+                completion(.success(profileImageURL))
                 NotificationCenter.default.post(
                     name: ProfileImageService.didChangeNotification,
                     object: self,
-                    userInfo: ["URL": user.profileImage.medium]
+                    userInfo: nil
                 )
-                self.avatarURL = user.profileImage.medium
                 self.task = nil
 
             case .failure(let error):
-                self.task = nil
                 completion(.failure(error))
             }
         }
+
         self.task = task
         task.resume()
     }
-    // end fetchImage
 }
 
 extension ProfileImageService {
+
+    private func profileImageRequest(username: String) -> URLRequest? {
+        urlRequestFactory.makeHTTPRequest(
+            path: "/users/\(username)",
+            httpMethod: "GET"
+        )
+    }
+
     func clean() {
         avatarURL = nil
         task = nil

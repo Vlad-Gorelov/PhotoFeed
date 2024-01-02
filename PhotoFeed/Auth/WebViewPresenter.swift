@@ -4,6 +4,7 @@ import WebKit
 protocol WebViewPresenterProtocol {
     var view: WebViewViewControllerProtocol? { get set }
     func viewDidLoad()
+    func autorizeInUnsplash()
     func didUpdateProgressValue(_ newValue: Double)
     func code(from url: URL) -> String?
 }
@@ -23,9 +24,15 @@ final class WebViewPresenter: WebViewPresenterProtocol {
         self.authHelper = authHelper
     }
 
+    func autorizeInUnsplash() {
+        let request = authHelper.authRequest()
+        view?.load(request: request)
+        didUpdateProgressValue(0)
+    }
+
     func didUpdateProgressValue(_ newValue: Double) {
         let newProgressValue = Float(newValue)
-        view?.setProgressValue(shouldHideProgress)
+        view?.setProgressValue(newProgressValue)
 
         let shouldHideProgress = shouldHideProgress(for: newProgressValue)
         view?.setProgressHidden(shouldHideProgress)
@@ -37,5 +44,14 @@ final class WebViewPresenter: WebViewPresenterProtocol {
 
     func code(from url: URL) -> String? {
         authHelper.code(from: url)
+    }
+
+    static func clean() {
+        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
+        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { record in
+            record.forEach { record in
+                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
+            }
+        }
     }
 }

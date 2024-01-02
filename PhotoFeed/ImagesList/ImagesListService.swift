@@ -77,7 +77,7 @@ final class ImagesListService {
                                              thumbImageURL: photo.thumbImageURL,
                                              fullImageURL: photo.fullImageURL,
                                              isLiked: !photo.isLiked)
-                        self.photos = self.photos.withReplaced(itemAt: index, newValue: newPhoto)
+                        self.photos = self.photos.replacingElement(itemAt: index, newValue: newPhoto)
                     }
                     completion(.success(()))
                 case .failure(let error):
