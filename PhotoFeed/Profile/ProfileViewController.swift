@@ -6,7 +6,10 @@ import WebKit
 final class ProfileViewController: UIViewController {
 
     private let profileService = ProfileService.shared
-    
+    private let profileImageService = ProfileImageService.shared
+    private let imagesListService = ImagesListService.shared
+    private let token = OAuthToTokenStorage()
+
     private let profileImageView: UIImageView = {
         let imageView = UIImageView()
         imageView.image = UIImage(named: "Photo")
@@ -15,7 +18,7 @@ final class ProfileViewController: UIViewController {
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
     }()
-    
+
     private let nameLabel: UILabel = {
         let label = UILabel()
         label.text = "___ ___"
@@ -33,7 +36,7 @@ final class ProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     private let descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "___"
@@ -42,7 +45,7 @@ final class ProfileViewController: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
-    
+
     lazy var logoutButton: UIButton = {
         let button = UIButton.systemButton(
             with: UIImage(named: "Exit")!,
@@ -70,18 +73,18 @@ final class ProfileViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         view.backgroundColor = .ypBlack
         view.addSubview(profileImageView)
         view.addSubview(nameLabel)
         view.addSubview(profileNameLabel)
         view.addSubview(descriptionLabel)
         view.addSubview(logoutButton)
-        
+
         constraintsSet()
         updateProfileDetails()
-
     }
+
     private func updateProfileDetails() {
         guard let profile = profileService.profile else { return }
 
@@ -100,6 +103,9 @@ final class ProfileViewController: UIViewController {
                           .transition(.fade(1)),
                           .cacheSerializer(FormatIndicatedCacheSerializer.png)]
             )
+            let cache = ImageCache.default
+            cache.clearMemoryCache()
+            cache.clearDiskCache()
         }
     }
 
@@ -151,10 +157,37 @@ final class ProfileViewController: UIViewController {
             let _ = URL(string: profileImageURL)
         else { return }
     }
-    
+
     @objc private func didTapLogoutButton() {
-        print("Exit app")
+        showAlert()
     }
 }
 
+extension ProfileViewController {
 
+    private func showAlert() {
+        let alert = UIAlertController(
+            title: "Пока, пока!",
+            message: "Уверены что хотите выйти?",
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: "Да", style: .default) { [weak self] alertAction in
+            guard let self = self else { return }
+            self.cleanAndGoToMainScreen()
+        })
+        alert.addAction(UIAlertAction(title: "Нет", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+
+    private func cleanAndGoToMainScreen() {
+        WebViewViewController.clean()
+        profileImageService.clean()
+        profileService.clean()
+        imagesListService.clean()
+        token.clean()
+
+        guard let window = UIApplication.shared.windows.first else { fatalError("Invalid Configuration") }
+        window.rootViewController = SplashViewController()
+    }
+
+}

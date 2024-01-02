@@ -10,10 +10,10 @@ final class SplashViewController: UIViewController {
         return imageView
     }()
 
-
     private let networkService = OAuthToService.shared
     private let oauthToTokenStorage = OAuthToTokenStorage()
-    private let profileService = ProfileService.shared 
+    private let profileServiсe = ProfileService.shared
+    private let profileImageService = ProfileImageService.shared
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
 
     override func viewWillAppear(_ animated: Bool) {
@@ -30,7 +30,7 @@ final class SplashViewController: UIViewController {
             title: "Что-то пошло не так :(",
             message: "Не удаётся войти в систему",
             preferredStyle: .alert
-            )
+        )
 
         let action = UIAlertAction(title: "Ok", style: .cancel) { [weak self] _ in
             guard let self = self else { return }
@@ -55,8 +55,8 @@ final class SplashViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        if let token = oauthToTokenStorage.token {
-            fetchProfile(with: token)
+        if oauthToTokenStorage.token != nil {
+            fetchProfile()
         } else {
 
             if !networkService.isLoading {
@@ -84,10 +84,6 @@ final class SplashViewController: UIViewController {
     }
 }
 
-
-
-
-
 //MARK: - AuthViewControllerDelegate
 
 extension SplashViewController: AuthViewControllerDelegate {
@@ -107,8 +103,9 @@ extension SplashViewController: AuthViewControllerDelegate {
             switch result {
             case .success(let token):
                 oauthToTokenStorage.token = token
-                fetchProfile(with: token)
+                fetchProfile()
                 UIBlockingProgressHUD.dismiss()
+                
             case.failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 print(error.localizedDescription)
@@ -117,17 +114,20 @@ extension SplashViewController: AuthViewControllerDelegate {
         }
     }
 
-    private func fetchProfile(with token: String) {
-        profileService.fetchProfile(token) { [weak self] result in
+    private func fetchProfile() {
+        profileServiсe.fetchProfile() { [weak self] result in
             guard let self = self else { return }
             switch result {
-            case .success (let profile):
-                ProfileImageService.shared.fetchProfileImageURL(username: profile.username) { _ in }
+            case .success:
                 UIBlockingProgressHUD.dismiss()
+                guard let username = self.profileServiсe.profile?.username else { return }
+                self.profileImageService.fetchProfileImageURL(username: username) { _ in }
                 self.switchToTabBarController()
-            case .failure(let error):
+
+            case .failure:
                 UIBlockingProgressHUD.dismiss()
-                assertionFailure(error.localizedDescription)
+                self.showAlert()
+                break
             }
         }
     }
