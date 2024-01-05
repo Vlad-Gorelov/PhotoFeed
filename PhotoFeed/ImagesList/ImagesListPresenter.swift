@@ -6,7 +6,7 @@ protocol ImagesListViewPresenterProtocol: AnyObject {
     var photos: [Photo] { get set }
 
     func viewDidLoad()
-    func imagesListCellDidTapLike(_ cell: ImagesListCell, indexPath: IndexPath)
+ //   func imagesListCellDidTapLike(_ cell: ImagesListCell, indexPath: IndexPath)
     func updateTableViewAnimation()
 }
 
@@ -35,27 +35,6 @@ final class ImagesListPresenter: ImagesListViewPresenterProtocol {
         imagesListService.fetchPhotoNextPage()
     }
 
-
-    func imagesListCellDidTapLike(_ cell: ImagesListCell, indexPath: IndexPath) {
-        let photo = photos[indexPath.row]
-        UIBlockingProgressHUD.show()
-        imagesListService.changeLike(
-            photoId: photo.id,
-            isLike: photo.isLiked) { result in
-                switch result {
-                case .success:
-                    self.photos = self.imagesListService.photos
-                    cell.setIsLiked(entryValue: self.photos[indexPath.row].isLiked)
-                    UIBlockingProgressHUD.dismiss()
-                case .failure:
-                    UIBlockingProgressHUD.dismiss()
-                    //TODO: Show Alert
-    #warning("Show Alert something gone wrong")
-                    //self.showAlertLikes()
-                }
-            }
-    }
-
     func updateTableViewAnimation() {
         let oldCount = photos.count
         let newCount = imagesListService.photos.count
@@ -64,15 +43,5 @@ final class ImagesListPresenter: ImagesListViewPresenterProtocol {
             view?.updateTableViewAnimated(oldCount: oldCount, newCount: newCount)
         }
     }
-
-    /* func showAlertLikes() {
-        let alert = UIAlertController(
-            title: "Ошибка",
-            message: "Что-то пошло не так :(",
-            preferredStyle: .alert
-        )
-        alert.addAction(UIAlertAction(title: "Понятно", style: .default, handler: nil))
-        present(alert, animated: true, completion: nil)
-    } */
     
 }
