@@ -3,6 +3,12 @@ import ProgressHUD
 
 final class SplashViewController: UIViewController {
 
+    enum TokenState {
+        case notLoaded
+        case loading
+        case didLoaded
+    }
+
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
     private let oauthToService = OAuthToService.shared
     private let oauthToTokenStorage = OAuthToTokenStorage.shared
@@ -10,16 +16,21 @@ final class SplashViewController: UIViewController {
     private let profileImageService = ProfileImageService.shared
     private let alertPresenter = AlertPresenter()
 
+    private var tokenState: TokenState = .notLoaded
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        view.backgroundColor = .ypBlack
         alertPresenter.delegate = self
+        tokenState = oauthToService.isAuthenticated
+        ? .didLoaded
+        : .notLoaded
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         guard UIBlockingProgressHUD.isShowing == false else { return }
-        checkAuthTokenAndFetchProfile()
+        switchTokenState()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -46,18 +57,30 @@ final class SplashViewController: UIViewController {
             .instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBar
     }
+
+    private func switchTokenState() {
+        switch tokenState {
+        case .notLoaded:
+            presentAuthViewController()
+        case .loading:
+            break
+        case .didLoaded:
+            fetchProfile()
+        }
+    }
+
 }
 
 //MARK: - AuthViewControllerDelegate
 
 extension SplashViewController: AuthViewControllerDelegate {
-    func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
 
+    func authViewController(_ vc: AuthViewController, didAuthenticateWithCode code: String) {
+        tokenState = .loading
         dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
             UIBlockingProgressHUD.show()
             self.fetchOAuthToken(code)
-            self.checkAuthTokenAndFetchProfile()
         }
     }
 
@@ -66,7 +89,8 @@ extension SplashViewController: AuthViewControllerDelegate {
             guard let self = self else { return }
             switch result {
             case .success:
-                fetchProfile()
+                tokenState = .didLoaded
+                switchTokenState()
             case.failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 self.showLoginAlert(error: error)
@@ -109,14 +133,6 @@ extension SplashViewController: AuthViewControllerDelegate {
         alertPresenter.showAlert(title: "Что-то пошло не так :(",
                                  message: "Не удалось войти в систему: \(error.localizedDescription)") { [weak self] in
             self?.presentAuthViewController()
-        }
-    }
-
-    func checkAuthTokenAndFetchProfile() {
-        if oauthToService.isAuthenticated {
-            fetchProfile()
-        } else {
-            presentAuthViewController()
         }
     }
 }
