@@ -6,7 +6,6 @@ protocol ImagesListViewPresenterProtocol: AnyObject {
     var photos: [Photo] { get set }
     
     func viewDidLoad()
-    //   func imagesListCellDidTapLike(_ cell: ImagesListCell, indexPath: IndexPath)
     func updateTableViewAnimation()
 }
 

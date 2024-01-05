@@ -10,8 +10,8 @@ struct AuthConfiguration {
 
     static var standard: AuthConfiguration {
         return AuthConfiguration(
-            accessKey: "gLkc8QG1UQq8IA3AlkD-O6dhMIyE3uU43gaNZ0aw6ME",
-            secretKey: "6qbyN1WJcsECpQmC9W-qJ6PYvmi1wf2KIoFopXKmExU",
+            accessKey: "34t2lwoXiAZTkh02Po-8--STfbitLRFKgNdS7Tyegvo",
+            secretKey: "wvngSda4iX5Yt5R-OxkFDZ2knqDxARAVdCpucDhS5qQ",
             redirectURI: "urn:ietf:wg:oauth:2.0:oob",
             accessScope: "public+read_user+write_likes",
             defaultApiBaseURLString: ("https://api.unsplash.com"),

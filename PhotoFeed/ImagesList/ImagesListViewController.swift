@@ -7,29 +7,25 @@ protocol ImageListViewControllerProtocol: AnyObject {
     func updateTableViewAnimated(oldCount: Int, newCount: Int)
 }
 
-final class ImagesListViewController: UIViewController {
-    
+final class ImagesListViewController: UIViewController, ImageListViewControllerProtocol {
+
     private var ShowSingleImageSegueIdentifier = "ShowSingleImage"
     private var imageListServiceObserver: NSObjectProtocol?
     private var photos: [Photo] = []
     private let imagesListService = ImagesListService.shared
 
+    lazy var presenter: ImagesListViewPresenterProtocol? = {
+            return ImagesListPresenter()
+        }()
+
     @IBOutlet private var tableView: UITableView!
-    
+
     override func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        
-        imageListServiceObserver = NotificationCenter.default.addObserver(
-            forName: ImagesListService.didChangeNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            guard let self = self else { return }
-            self.updateTableViewAnimated()
+            super.viewDidLoad()
+            configureTableView()
+            presenter?.view = self
+            presenter?.viewDidLoad()
         }
-        imagesListService.fetchPhotoNextPage()
-    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == ShowSingleImageSegueIdentifier {
@@ -43,8 +39,12 @@ final class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
-    
-    private func updateTableViewAnimated() {
+
+    private func configureTableView() {
+          tableView?.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+      }
+
+    func updateTableViewAnimated(oldCount: Int, newCount: Int) {
         let oldCount = photos.count
         let newCount = imagesListService.photos.count
         photos = imagesListService.photos
