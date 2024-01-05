@@ -14,7 +14,7 @@ struct AuthConfiguration {
             secretKey: "6qbyN1WJcsECpQmC9W-qJ6PYvmi1wf2KIoFopXKmExU",
             redirectURI: "urn:ietf:wg:oauth:2.0:oob",
             accessScope: "public+read_user+write_likes",
-            defaultApiBaseURLString: "https://api.unsplash.com",
+            defaultApiBaseURLString: ("https://api.unsplash.com"),
             unsplashAuthorizeURLString: "https://unsplash.com/oauth/authorize"
         )
     }

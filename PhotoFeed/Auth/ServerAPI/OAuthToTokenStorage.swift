@@ -22,6 +22,6 @@ final class OAuthToTokenStorage {
 
 extension OAuthToTokenStorage {
     func clean() {
-        KeychainWrapper.standard.removeAllKeys()
+        keychain.removeAllKeys()
     }
 }

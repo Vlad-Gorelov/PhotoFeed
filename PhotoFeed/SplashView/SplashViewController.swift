@@ -3,19 +3,24 @@ import ProgressHUD
 
 final class SplashViewController: UIViewController {
 
-    private var imageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "logo")
-        return imageView
-    }()
-
     private let showAuthenticationScreenSegueIdentifier = "ShowAuthenticationScreen"
-    private let oauthToTokenStorage = OAuthToTokenStorage.shared
     private let oauthToService = OAuthToService.shared
+    private let oauthToTokenStorage = OAuthToTokenStorage.shared
     private let profileServiсe = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
+    private let alertPresenter = AlertPresenter()
 
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        alertPresenter.delegate = self
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        guard UIBlockingProgressHUD.isShowing == false else { return }
+        checkAuthTokenAndFetchProfile()
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -26,54 +31,19 @@ final class SplashViewController: UIViewController {
         .lightContent
     }
 
-    private func showAlert() {
-        let alertController = UIAlertController(
-            title: "Что-то пошло не так :(",
-            message: "Не удаётся войти в систему",
-            preferredStyle: .alert
-        )
-
-        let action = UIAlertAction(title: "Ok", style: .cancel) { [weak self] _ in
-            guard let self = self else { return }
-            switchToAuthViewController()
-        }
-
-        alertController.addAction(action)
-        present(alertController, animated: true)
-    }
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        view.backgroundColor = .ypBlack
-        view.addSubview(imageView)
-        NSLayoutConstraint.activate([
-            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
-        ])
-    }
-
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        guard UIBlockingProgressHUD.isShowing == false else { return }
-        checkAuthTokenAndFetchProfile()
-    }
-
-    private func switchToAuthViewController() {
-        guard let authVC = UIStoryboard(name: "Main", bundle: .main)
-            .instantiateViewController(withIdentifier: "AuthViewController") as? AuthViewController
-        else { return }
-        authVC.delegate = self
-        authVC.modalPresentationStyle = .fullScreen
-        present(authVC, animated: true)
-    }
+    private lazy var imageView: UIImageView = {
+        let imageView = UIImageView()
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        imageView.image = UIImage(named: "logo")
+        return imageView
+    }()
 
     private func switchToTabBarController() {
         guard let window = UIApplication.shared.windows.first else {
-            assertionFailure("Invalid Configuration")
-            return
+            fatalError("Invalid Configuration")
         }
-        let tabBar = UIStoryboard(name: "Main", bundle: .main).instantiateViewController(withIdentifier: "TabBarViewController")
+        let tabBar = UIStoryboard(name: "Main", bundle: .main)
+            .instantiateViewController(withIdentifier: "TabBarViewController")
         window.rootViewController = tabBar
     }
 }
@@ -86,20 +56,12 @@ extension SplashViewController: AuthViewControllerDelegate {
         dismiss(animated: true) { [weak self] in
             guard let self = self else { return }
             UIBlockingProgressHUD.show()
-            self.fetchOAuthToken(with: code)
+            self.fetchOAuthToken(code)
             self.checkAuthTokenAndFetchProfile()
         }
     }
 
-    func checkAuthTokenAndFetchProfile() {
-        if oauthToService.isAuthenticated {
-            fetchProfile()
-        } else {
-            presentAuthViewController()
-        }
-    }
-
-    private func fetchOAuthToken(with code: String) {
+    private func fetchOAuthToken(_ code: String) {
         oauthToService.fetchAuthToken(code) { [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -107,7 +69,7 @@ extension SplashViewController: AuthViewControllerDelegate {
                 fetchProfile()
             case.failure(let error):
                 UIBlockingProgressHUD.dismiss()
-                print(error.localizedDescription)
+                self.showLoginAlert(error: error)
                 break
             }
         }
@@ -123,9 +85,9 @@ extension SplashViewController: AuthViewControllerDelegate {
                 self.profileImageService.fetchProfileImageURL(username: username) { _ in }
                 self.switchToTabBarController()
 
-            case .failure:
+            case .failure(let error):
                 UIBlockingProgressHUD.dismiss()
-                self.showAlert()
+                self.showLoginAlert(error: error)
                 break
             }
         }
@@ -142,6 +104,31 @@ extension SplashViewController: AuthViewControllerDelegate {
         authViewController.modalPresentationStyle = .fullScreen
         self.present(authViewController, animated: true, completion: nil)
     }
+
+    func showLoginAlert(error: Error) {
+        alertPresenter.showAlert(title: "Что-то пошло не так :(",
+                                 message: "Не удалось войти в систему: \(error.localizedDescription)") { [weak self] in
+            self?.presentAuthViewController()
+        }
+    }
+
+    func checkAuthTokenAndFetchProfile() {
+        if oauthToService.isAuthenticated {
+            fetchProfile()
+        } else {
+            presentAuthViewController()
+        }
+    }
 }
 
 
+extension SplashViewController {
+    func setUpSplashImageView() {
+        view.backgroundColor = .ypBlack
+        view.addSubview(imageView)
+        NSLayoutConstraint.activate([
+            imageView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            imageView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+    }
+}

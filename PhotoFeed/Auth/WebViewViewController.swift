@@ -23,13 +23,13 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
     weak var delegate: WebViewViewControllerDelegate?
     var presenter: WebViewPresenterProtocol?
 
-    // MARK: IBOutlet
+    // MARK: - IBOutlet
 
     @IBOutlet private weak var webView: WKWebView!
     @IBOutlet private weak var progressView: UIProgressView!
 
 
-    // MARK: Lifecycle
+    // MARK: - Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -57,7 +57,7 @@ final class WebViewViewController: UIViewController & WebViewViewControllerProto
         progressView.isHidden = isHidden
     }
 
-    // MARK: Actions
+    // MARK: - Actions
 
     @IBAction func didTapBackButton(_ sender: Any) {
         delegate?.webViewViewControllerDidCancel(self)
@@ -89,15 +89,6 @@ extension WebViewViewController: WKNavigationDelegate {
             decisionHandler(.cancel)
         } else {
             decisionHandler(.allow)
-        }
-    }
-
-    static func clean() {
-        HTTPCookieStorage.shared.removeCookies(since: Date.distantPast)
-        WKWebsiteDataStore.default().fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { record in
-            record.forEach { record in
-                WKWebsiteDataStore.default().removeData(ofTypes: record.dataTypes, for: [record], completionHandler: {})
-            }
         }
     }
 }

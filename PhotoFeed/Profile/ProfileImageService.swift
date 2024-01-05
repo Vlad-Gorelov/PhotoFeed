@@ -19,7 +19,7 @@ final class ProfileImageService {
     ) {
         assert(Thread.isMainThread)
         task?.cancel()
-        guard var request = profileImageRequest(username: username) else {
+        guard let request = profileImageRequest(username: username) else {
             assertionFailure("Invalid request")
             completion(.failure(NetworkError.invalidRequest))
             return

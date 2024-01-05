@@ -1,6 +1,12 @@
 import UIKit
 import Kingfisher
 
+protocol ImageListViewControllerProtocol: AnyObject {
+    var presenter: ImagesListViewPresenterProtocol? { get set }
+
+    func updateTableViewAnimated(oldCount: Int, newCount: Int)
+}
+
 final class ImagesListViewController: UIViewController {
     
     private var ShowSingleImageSegueIdentifier = "ShowSingleImage"

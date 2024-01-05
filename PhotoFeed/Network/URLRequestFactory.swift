@@ -6,7 +6,6 @@ final class URLRequestFactory {
 
     private let storage = OAuthToTokenStorage.shared
 
-    private init() {}
 
     // MARK: - HTTP Request
     func makeHTTPRequest(

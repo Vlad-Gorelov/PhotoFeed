@@ -7,6 +7,7 @@ enum NetworkError: Error {
     case invalidRequest
 }
 
-enum ParseError: Error {
+/* enum ParseError: Error {
     case decodeError(Error)
 }
+*/
