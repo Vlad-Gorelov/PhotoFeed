@@ -12,7 +12,6 @@ final class AuthViewController: UIViewController {
     private var showWebViewSegueIdentifier = "ShowWebView"
     private let oauthToService = OAuthToService()
 
-
     // MARK: - Segue
 
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

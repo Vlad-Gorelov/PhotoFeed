@@ -57,7 +57,6 @@ final class ProfileViewPresenter: ProfileViewPresenterProtocol {
         profileService.clean()
         imagesListService.clean()
         token.clean()
-
         view?.cleanAndGoToMainScreen()
     }
 }

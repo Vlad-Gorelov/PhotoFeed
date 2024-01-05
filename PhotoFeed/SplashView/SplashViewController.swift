@@ -15,7 +15,6 @@ final class SplashViewController: UIViewController {
     private let profileServiсe = ProfileService.shared
     private let profileImageService = ProfileImageService.shared
     private let alertPresenter = AlertPresenter()
-
     private var tokenState: TokenState = .notLoaded
 
     override func viewDidLoad() {
@@ -68,7 +67,6 @@ final class SplashViewController: UIViewController {
             fetchProfile()
         }
     }
-
 }
 
 //MARK: - AuthViewControllerDelegate
@@ -108,7 +106,6 @@ extension SplashViewController: AuthViewControllerDelegate {
                 guard let username = self.profileServiсe.profile?.username else { return }
                 self.profileImageService.fetchProfileImageURL(username: username) { _ in }
                 self.switchToTabBarController()
-
             case .failure(let error):
                 UIBlockingProgressHUD.dismiss()
                 self.showLoginAlert(error: error)
@@ -136,7 +133,6 @@ extension SplashViewController: AuthViewControllerDelegate {
         }
     }
 }
-
 
 extension SplashViewController {
     func setUpSplashImageView() {

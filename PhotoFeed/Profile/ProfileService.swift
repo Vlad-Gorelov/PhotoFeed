@@ -15,9 +15,7 @@ final class ProfileService {
     func fetchProfile(
         completion: @escaping (Result<Profile, Error>) -> Void
     ) {
-
         task?.cancel()
-
         guard let request = profileRequest() else {
             assertionFailure("Invalid request")
             completion(.failure(NetworkError.invalidRequest))

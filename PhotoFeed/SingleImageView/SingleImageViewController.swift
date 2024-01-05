@@ -20,7 +20,7 @@ final class SingleImageViewController: UIViewController {
         super.viewDidLoad()
         setImage()
     }
-
+    
     private func setImage() {
         UIBlockingProgressHUD.show()
         imageView.kf.setImage(with: imageURL) { [weak self] result in

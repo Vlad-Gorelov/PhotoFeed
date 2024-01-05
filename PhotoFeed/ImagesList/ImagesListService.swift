@@ -1,10 +1,10 @@
 import Foundation
 
 final class ImagesListService {
-
+    
     static let didChangeNotification = Notification.Name(rawValue: "ImagesListServiceDidChange")
     static let shared = ImagesListService()
-
+    
     private (set) var photos: [Photo] = []
     private var lastLoadedPage: Int?
     private var task: URLSessionTask?
@@ -12,14 +12,14 @@ final class ImagesListService {
     private let storageToken = OAuthToTokenStorage()
     private let urlRequestFactory: URLRequestFactory
     let dateFormater = ISO8601DateFormatter()
-
+    
     init(urlRequestFactory: URLRequestFactory = .shared) {
         self.urlRequestFactory = urlRequestFactory
     }
-
+    
     func fetchPhotoNextPage() {
         guard task == nil else { return }
-
+        
         let nextPage = lastLoadedPage == nil ? 1 : lastLoadedPage! + 1
         guard let request = photosRequest(page: nextPage, perPage: 10) else {
             assertionFailure("\(NetworkError.invalidRequest)")
@@ -27,13 +27,11 @@ final class ImagesListService {
         }
         self.task = urlSession.objectTask(for: request) { [weak self] (result: Result<[PhotoResult], Error>) in
             guard let self = self else { return }
-
             switch result {
             case .success(let photoResults):
                 for photoResult in photoResults {
                     self.photos.append(self.decodedResult(photoResult))
                 }
-
                 self.lastLoadedPage = nextPage
                 self.task = nil
                 NotificationCenter.default
@@ -49,7 +47,7 @@ final class ImagesListService {
         }
         self.task?.resume()
     }
-
+    
     private func handleNetworkError(_ error: Error) {
         switch error {
         case let networkError as NetworkError:
@@ -67,7 +65,7 @@ final class ImagesListService {
             print("Unexpected Error: \(error.localizedDescription)")
         }
     }
-
+    
     func changeLike(photoId: String, isLike: Bool, _ completion: @escaping (Result<Void, Error>) -> Void) { //
         assert(Thread.isMainThread)
         guard task == nil else { return }
@@ -84,7 +82,7 @@ final class ImagesListService {
             DispatchQueue.main.async { [weak self] in
                 guard let self = self else { return }
                 self.task = nil
-
+                
                 switch result {
                 case .success(let photoResult):
                     if let index = self.photos.firstIndex(where: { $0.id == photoResult.photo?.id }) {
@@ -107,7 +105,7 @@ final class ImagesListService {
         self.task = task
         task.resume()
     }
-
+    
     private func likeRequest(_ token: String,
                              photoId: String,
                              httpMethod: String) -> URLRequest? {
@@ -117,7 +115,7 @@ final class ImagesListService {
         request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
         return request
     }
-
+    
     private func decodedResult(_ photoResult: PhotoResult) -> Photo {
         return Photo.init(id: photoResult.id,
                           size: CGSize(width: photoResult.width ?? 0, height: photoResult.height ?? 0),
@@ -137,7 +135,7 @@ extension ImagesListService {
                                           httpMethod: "GET"
         )
     }
-
+    
     func clean() {
         task = nil
         photos = []

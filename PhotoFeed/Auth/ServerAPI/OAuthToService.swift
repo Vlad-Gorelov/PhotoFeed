@@ -3,7 +3,7 @@ import Foundation
 final class OAuthToService {
 
     static let shared = OAuthToService()
-
+    
     private let urlSession = URLSession.shared
     private let storage = OAuthToTokenStorage.shared
     private let urlRequestFactory = URLRequestFactory.shared
@@ -64,7 +64,6 @@ final class OAuthToService {
 
         var request = URLRequest(url: components.url!)
         request.httpMethod = "POST"
-
         return request
     }
 }

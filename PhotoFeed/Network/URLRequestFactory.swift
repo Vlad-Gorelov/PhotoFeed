@@ -3,9 +3,7 @@ import Foundation
 final class URLRequestFactory {
 
     static let shared = URLRequestFactory()
-
     private let storage = OAuthToTokenStorage.shared
-
 
     // MARK: - HTTP Request
     func makeHTTPRequest(

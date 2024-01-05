@@ -13,7 +13,7 @@ final class ImagesListViewController: UIViewController {
     private var imageListServiceObserver: NSObjectProtocol?
     private var photos: [Photo] = []
     private let imagesListService = ImagesListService.shared
-    
+
     @IBOutlet private var tableView: UITableView!
     
     override func viewDidLoad() {

@@ -51,4 +51,3 @@ final class ImagesListCell: UITableViewCell {
         feedbackGenerator.notificationOccurred(.success)
     }
 }
-
