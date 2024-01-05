@@ -13,11 +13,6 @@ struct PhotoResult: Decodable {
 struct UrlsResult: Decodable {
     let thumb: String?
     let full: String?
-
-   /* private enum CodingKeys: String, CodingKey {
-        case trumbImageURL = "thumb"
-        case fullImageURL = "full"
-    } */
 }
 
 struct LikeResult: Decodable {

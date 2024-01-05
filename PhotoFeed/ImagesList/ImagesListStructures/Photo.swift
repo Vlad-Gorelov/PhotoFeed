@@ -9,3 +9,4 @@ struct Photo {
     let fullImageURL: String?
     let isLiked: Bool
 }
+
