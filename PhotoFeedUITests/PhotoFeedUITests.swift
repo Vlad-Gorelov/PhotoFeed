@@ -5,7 +5,7 @@ final class PhotoFeedUITests: XCTestCase {
     private let app = XCUIApplication()
 
     // MARK: - заполнить своими данными
-    
+
     let login = "" // e-mail
     let password = "" // password
     let username = "" // name + surname
@@ -56,10 +56,9 @@ final class PhotoFeedUITests: XCTestCase {
 
         let cellToLike = tableView.descendants(matching: .cell).element(boundBy: 1)
         let likeButton = cellToLike.buttons["likeButton"]
+        XCTAssertTrue(likeButton.waitForExistence(timeout: 10))
 
         likeButton.tap()
-        sleep(5)
-
         likeButton.tap()
         sleep(5)
 
