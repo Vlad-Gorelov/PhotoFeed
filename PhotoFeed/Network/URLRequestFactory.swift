@@ -2,6 +2,8 @@ import Foundation
 
 final class URLRequestFactory {
 
+    private init() {}
+
     static let shared = URLRequestFactory()
     private let storage = OAuthToTokenStorage.shared
 

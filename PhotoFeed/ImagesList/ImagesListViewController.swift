@@ -105,6 +105,7 @@ extension ImagesListViewController: UITableViewDataSource {
 //MARK: - UITableViewDelegate
 
 extension ImagesListViewController: UITableViewDelegate {
+
     func tableView(
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
@@ -123,8 +124,14 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row + 1 == imagesListService.photos.count {
-            imagesListService.fetchPhotoNextPage()
+        // MARK: disable pagination for UI test (PhotoFeedUITests)
+        let testMode = ProcessInfo.processInfo.arguments.contains("testMode")
+        if testMode {
+          print(imagesListService.photos.count)
+        } else {
+            if indexPath.row + 1 == imagesListService.photos.count {
+                imagesListService.fetchPhotoNextPage()
+            }
         }
     }
 }

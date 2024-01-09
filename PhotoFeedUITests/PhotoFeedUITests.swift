@@ -6,13 +6,14 @@ final class PhotoFeedUITests: XCTestCase {
 
     // MARK: - заполнить своими данными
     
-    let login = ""
-    let password = ""
-    let username = ""
-    let nickname = ""
+    let login = "" // e-mail
+    let password = "" // password
+    let username = "" // name + surname
+    let nickname = "" // @nickname
 
     override func setUpWithError() throws {
         continueAfterFailure = false
+        app.launchArguments = ["testMode"]
         app.launch()
     }
 
@@ -46,21 +47,24 @@ final class PhotoFeedUITests: XCTestCase {
     }
 
     func testFeed() throws {
-        let tablesQuery = app.tables
-        let cell = tablesQuery.children(matching: .cell).element(boundBy: 0)
+
+        let tableView = app.tables
+        let cell = tableView.descendants(matching: .cell).element(boundBy: 0)
         cell.swipeUp()
 
-        sleep(2)
+        sleep(5)
 
-        let cellToLike = tablesQuery.children(matching: .cell).element(boundBy: 1)
-        let likeButton = cellToLike.buttons["LikeButton"]
+        let cellToLike = tableView.descendants(matching: .cell).element(boundBy: 1)
+        let likeButton = cellToLike.buttons["likeButton"]
+
         likeButton.tap()
-        sleep(2)
+        sleep(5)
+
         likeButton.tap()
-        sleep(2)
+        sleep(5)
 
         cellToLike.tap()
-        sleep(2)
+        sleep(5)
 
         let image = app.scrollViews.images.element(boundBy: 0)
         image.pinch(withScale: 3, velocity: 1)
@@ -68,7 +72,9 @@ final class PhotoFeedUITests: XCTestCase {
 
         let navBackButton = app.buttons["navBackButton"]
         navBackButton.tap()
+
     }
+
 
     func testProfile() throws {
         sleep(1)
