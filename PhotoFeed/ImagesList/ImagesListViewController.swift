@@ -1,29 +1,31 @@
 import UIKit
 import Kingfisher
 
-final class ImagesListViewController: UIViewController {
-    
+protocol ImageListViewControllerProtocol: AnyObject {
+    var presenter: ImagesListViewPresenterProtocol? { get set }
+
+    func updateTableViewAnimated(oldCount: Int, newCount: Int)
+}
+
+final class ImagesListViewController: UIViewController, ImageListViewControllerProtocol {
+
     private var ShowSingleImageSegueIdentifier = "ShowSingleImage"
     private var imageListServiceObserver: NSObjectProtocol?
     private var photos: [Photo] = []
     private let imagesListService = ImagesListService.shared
-    
+
+    lazy var presenter: ImagesListViewPresenterProtocol? = {
+            return ImagesListPresenter()
+        }()
+
     @IBOutlet private var tableView: UITableView!
-    
+
     override func viewDidLoad() {
-        super.viewDidLoad()
-        tableView.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
-        
-        imageListServiceObserver = NotificationCenter.default.addObserver(
-            forName: ImagesListService.didChangeNotification,
-            object: nil,
-            queue: .main
-        ) { [weak self] _ in
-            guard let self = self else { return }
-            self.updateTableViewAnimated()
+            super.viewDidLoad()
+            configureTableView()
+            presenter?.view = self
+            presenter?.viewDidLoad()
         }
-        imagesListService.fetchPhotoNextPage()
-    }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if segue.identifier == ShowSingleImageSegueIdentifier {
@@ -37,8 +39,12 @@ final class ImagesListViewController: UIViewController {
             super.prepare(for: segue, sender: sender)
         }
     }
-    
-    private func updateTableViewAnimated() {
+
+    private func configureTableView() {
+          tableView?.contentInset = UIEdgeInsets(top: 12, left: 0, bottom: 12, right: 0)
+      }
+
+    func updateTableViewAnimated(oldCount: Int, newCount: Int) {
         let oldCount = photos.count
         let newCount = imagesListService.photos.count
         photos = imagesListService.photos
@@ -99,6 +105,7 @@ extension ImagesListViewController: UITableViewDataSource {
 //MARK: - UITableViewDelegate
 
 extension ImagesListViewController: UITableViewDelegate {
+
     func tableView(
         _ tableView: UITableView,
         didSelectRowAt indexPath: IndexPath
@@ -117,8 +124,14 @@ extension ImagesListViewController: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if indexPath.row + 1 == imagesListService.photos.count {
-            imagesListService.fetchPhotoNextPage()
+        // MARK: disable pagination for UI test (PhotoFeedUITests)
+        let testMode = ProcessInfo.processInfo.arguments.contains("testMode")
+        if testMode {
+          print(imagesListService.photos.count)
+        } else {
+            if indexPath.row + 1 == imagesListService.photos.count {
+                imagesListService.fetchPhotoNextPage()
+            }
         }
     }
 }
